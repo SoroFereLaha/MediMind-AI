@@ -1,42 +1,44 @@
 
 import type { Metadata } from 'next';
 import './globals.css'; // Global styles
-import { defaultLocale, locales } from '@/i18n'; // Import defaultLocale and locales
+import { AppLayout } from '@/components/layout/app-layout';
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | MediMind AI',
-    default: 'MediMind AI',
+    template: '%s | MediMind IA',
+    default: 'MediMind IA',
   },
-  description: 'AI-Powered Medical Guidance for your well-being.',
+  description: 'Guidance médicale assistée par IA pour votre bien-être.',
 };
 
 interface RootLayoutProps {
   children: React.ReactNode;
-  params: { locale: string }; // Ensure locale is expected as string
 }
 
 export default function RootLayout({
-  children,
-  params
+  children
 }: RootLayoutProps) {
-  // Ensure currentLocale is always a valid, defined locale string
-  const currentLocale = locales.includes(params.locale) ? params.locale : defaultLocale;
-  const dir = currentLocale === 'ar' ? 'rtl' : 'ltr';
-  const bodyFontClass = currentLocale === 'ar' ? 'font-arabic' : 'font-body';
+  const bodyFontClass = 'font-body'; // PT Sans par défaut
 
   return (
-    <html lang={currentLocale} dir={dir} suppressHydrationWarning>
+    <html lang="fr" dir="ltr" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
-        {currentLocale === 'ar' && (
-          <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet" />
-        )}
       </head>
       <body className={`${bodyFontClass} antialiased bg-background text-foreground`}>
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AppLayout>{children}</AppLayout>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

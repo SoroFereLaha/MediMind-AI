@@ -2,8 +2,8 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link'; // Using next/link directly
-import { usePathname } from 'next/navigation'; // Keep this for active link highlighting
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -20,13 +20,11 @@ import { Button } from '@/components/ui/button';
 import { getNavigationItems, getFooterNavigationItems, type NavItem } from '@/components/navigation-items';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Menu } from 'lucide-react';
-// import { useTranslations, useLocale } from 'next-intl'; // Removed
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageSwitcher } from '@/components/language-switcher';
 
 function Logo() {
-  // const t = useTranslations('AppLayout'); // Removed
-  const logoText = "MediMind AI"; // Hardcoded
+  const logoText = "MediMind IA";
   return (
     <Link href="/" className="flex items-center gap-2 font-headline text-lg font-semibold text-primary">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-primary">
@@ -46,28 +44,14 @@ function Logo() {
 
 
 function NavLink({ item }: { item: NavItem }) {
-  const pathname = usePathname(); // This is from next/navigation, not next-intl
-  // const locale = useLocale(); // Removed, no longer prefixing with locale here if next-intl routing is off
-  
-  // Simplified isActive logic assuming pathname doesn't include locale if next-intl routing is disabled
-  // Or, if [locale] structure is kept, pathname *will* include it.
-  // For robustness with current [locale] structure:
-  const currentPathWithoutLocale = pathname.startsWith('/en/') || pathname.startsWith('/fr/') || pathname.startsWith('/ar/')
-    ? pathname.substring(3) || '/' // remove /en, /fr, /ar and handle root
-    : pathname;
-
+  const pathname = usePathname();
   let isActive;
   if (item.href === '/') {
-    isActive = currentPathWithoutLocale === '/';
+    isActive = pathname === '/';
   } else {
-    isActive = currentPathWithoutLocale.startsWith(item.href);
+    isActive = pathname.startsWith(item.href);
   }
 
-  // The actual Link href should still point to the base path,
-  // locale prefixing will be handled by Next.js routing if [locale] folder exists.
-  // If [locale] structure is removed, item.href is fine.
-  // For now, assuming [locale] structure is kept but next-intl logic removed:
-  // The Link href="/interview" will be relative to the current locale segment.
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={isActive} tooltip={item.label}>
@@ -81,15 +65,11 @@ function NavLink({ item }: { item: NavItem }) {
 }
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  // const tNav = useTranslations('Navigation'); // Removed
-  // const tAppLayout = useTranslations('AppLayout'); // Removed
-
-  // getNavigationItems and getFooterNavigationItems are now modified to not take 't'
   const navigationItems = getNavigationItems();
   const footerNavigationItems = getFooterNavigationItems();
 
-  const footerSlogan = "Your health, understood."; // Hardcoded
-  const footerRights = `© ${new Date().getFullYear()} MediMind AI. All rights reserved. Data privacy ensured.`; // Hardcoded
+  const footerSlogan = "Votre santé, comprise.";
+  const footerRights = `© ${new Date().getFullYear()} MediMind IA. Tous droits réservés. Confidentialité des données assurée.`;
 
   return (
     <SidebarProvider defaultOpen={true}>

@@ -1,3 +1,4 @@
+
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck } from 'lucide-react';
@@ -6,40 +7,40 @@ export default function PrivacyPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Data Privacy at MediMind AI"
-        description="Your trust and privacy are paramount to us."
+        title="Confidentialité des Données chez MediMind IA"
+        description="Votre confiance et votre vie privée sont primordiales pour nous."
         icon={ShieldCheck}
       />
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Our Commitment to Your Privacy</CardTitle>
+          <CardTitle>Notre Engagement envers Votre Vie Privée</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-foreground/80">
           <p>
-            At MediMind AI, we are deeply committed to protecting your personal and health information. We understand the sensitivity of your data and have implemented robust security measures and privacy practices to ensure its confidentiality and integrity.
+            Chez MediMind IA, nous sommes profondément engagés à protéger vos informations personnelles et de santé. Nous comprenons la sensibilité de vos données et avons mis en place des mesures de sécurité robustes et des pratiques de confidentialité pour assurer leur confidentialité et leur intégrité.
           </p>
-          <h3 className="font-semibold text-lg text-primary">Data Collection and Use</h3>
+          <h3 className="font-semibold text-lg text-primary">Collecte et Utilisation des Données</h3>
           <p>
-            We collect information that you voluntarily provide during your interactions with our AI tools, such as symptoms, medical history, and other health-related details. This information is used solely for the purpose of providing you with AI-driven health insights, summaries, and recommendations as described in our services.
+            Nous collectons les informations que vous fournissez volontairement lors de vos interactions avec nos outils IA, telles que les symptômes, les antécédents médicaux et d'autres détails liés à la santé. Ces informations sont utilisées uniquement dans le but de vous fournir des informations, des résumés et des recommandations de santé basés sur l'IA, comme décrit dans nos services.
           </p>
-          <h3 className="font-semibold text-lg text-primary">Data Security</h3>
+          <h3 className="font-semibold text-lg text-primary">Sécurité des Données</h3>
           <p>
-            We employ industry-standard security safeguards to protect your data from unauthorized access, disclosure, alteration, or destruction. This includes encryption, access controls, and regular security assessments.
+            Nous utilisons des mesures de sécurité conformes aux normes de l'industrie pour protéger vos données contre l'accès, la divulgation, l'altération ou la destruction non autorisés. Cela inclut le cryptage, les contrôles d'accès et les évaluations de sécurité régulières.
           </p>
-          <h3 className="font-semibold text-lg text-primary">Data Sharing</h3>
+          <h3 className="font-semibold text-lg text-primary">Partage des Données</h3>
           <p>
-            We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties unless we provide users with advance notice. This does not include trusted third parties who assist us in operating our application, conducting our business, or serving our users, so long as those parties agree to keep this information confidential. We may also release information when it's release is appropriate to comply with the law, enforce our site policies, or protect ours or others' rights, property or safety.
+            Nous ne vendons, n'échangeons ni ne transférons d'aucune autre manière vos informations personnelles identifiables à des tiers, sauf si nous en informons préalablement les utilisateurs. Cela n'inclut pas les tiers de confiance qui nous aident à exploiter notre application, à mener nos activités ou à servir nos utilisateurs, tant que ces parties acceptent de garder ces informations confidentielles. Nous pouvons également divulguer des informations lorsque leur divulgation est appropriée pour se conformer à la loi, appliquer les politiques de notre site, ou protéger nos droits, notre propriété ou notre sécurité, ou ceux d'autrui.
           </p>
-           <h3 className="font-semibold text-lg text-primary">Your Control</h3>
+           <h3 className="font-semibold text-lg text-primary">Votre Contrôle</h3>
           <p>
-            We believe you should have control over your information. You may request access to, correction of, or deletion of your personal data, subject to applicable legal requirements.
+            Nous croyons que vous devriez avoir le contrôle sur vos informations. Vous pouvez demander l'accès, la correction ou la suppression de vos données personnelles, sous réserve des exigences légales applicables.
           </p>
-          <h3 className="font-semibold text-lg text-primary">Updates to This Policy</h3>
+          <h3 className="font-semibold text-lg text-primary">Mises à Jour de cette Politique</h3>
           <p>
-            We may update this privacy policy from time to time. We will notify you of any significant changes by posting the new policy on this page.
+            Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons de tout changement important en publiant la nouvelle politique sur cette page.
           </p>
           <p className="mt-6 text-sm text-muted-foreground">
-            This is a general overview of our data privacy practices. For complete details, please refer to our full Privacy Policy document (link to be provided if available). If you have any questions about our privacy practices, please contact us.
+            Ceci est un aperçu général de nos pratiques en matière de confidentialité des données. Pour des détails complets, veuillez consulter notre document complet de Politique de Confidentialité (lien à fournir si disponible). Si vous avez des questions sur nos pratiques de confidentialité, veuillez nous contacter.
           </p>
         </CardContent>
       </Card>

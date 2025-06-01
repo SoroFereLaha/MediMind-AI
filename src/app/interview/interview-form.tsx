@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, type FormEvent } from 'react';
@@ -28,7 +29,7 @@ export function InterviewForm() {
       const output = await aiPatientInterview({ patientName, initialComplaint });
       setResult(output);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'An unknown error occurred.');
+      setError(e instanceof Error ? e.message : 'Une erreur inconnue est survenue.');
     } finally {
       setIsLoading(false);
     }
@@ -39,37 +40,37 @@ export function InterviewForm() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MessageSquareText className="h-6 w-6 text-primary" />
-          Start Your Interview
+          Commencer Votre Entretien
         </CardTitle>
         <CardDescription>
-          Please provide your name and initial symptoms or concerns.
+          Veuillez indiquer votre nom et vos symptômes initiaux ou préoccupations.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="patientName" className="flex items-center gap-2">
-              <User className="h-4 w-4" /> Your Name
+              <User className="h-4 w-4" /> Votre Nom
             </Label>
             <Input
               id="patientName"
               type="text"
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
-              placeholder="e.g., Jane Doe"
+              placeholder="ex: Jeanne Dupont"
               required
               className="text-base"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="initialComplaint" className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4" /> Initial Complaint / Symptoms
+              <Sparkles className="h-4 w-4" /> Plainte Initiale / Symptômes
             </Label>
             <Textarea
               id="initialComplaint"
               value={initialComplaint}
               onChange={(e) => setInitialComplaint(e.target.value)}
-              placeholder="e.g., Persistent headache for 3 days, mild fever..."
+              placeholder="ex: Mal de tête persistant depuis 3 jours, fièvre légère..."
               required
               rows={4}
               className="text-base"
@@ -81,15 +82,15 @@ export function InterviewForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
+                Traitement en cours...
               </>
             ) : (
-              'Submit to AI'
+              'Soumettre à l\'IA'
             )}
           </Button>
           {error && (
             <Alert variant="destructive" className="w-full">
-              <AlertTitle>Error</AlertTitle>
+              <AlertTitle>Erreur</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -98,11 +99,11 @@ export function InterviewForm() {
 
       {result && (
         <div className="p-6 border-t">
-          <h3 className="font-headline text-2xl font-semibold mb-4 text-primary">Interview Summary & Next Steps</h3>
+          <h3 className="font-headline text-2xl font-semibold mb-4 text-primary">Résumé de l'Entretien et Prochaines Étapes</h3>
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Interview Summary</CardTitle>
+                <CardTitle>Résumé de l'Entretien</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="whitespace-pre-wrap">{result.interviewSummary}</p>
@@ -110,12 +111,12 @@ export function InterviewForm() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Suggested Specialty</CardTitle>
+                <CardTitle>Spécialité Suggérée</CardTitle>
               </CardHeader>
               <CardContent>
                 <Badge variant="secondary" className="text-lg px-3 py-1">{result.suggestedSpecialty}</Badge>
                  <p className="mt-2 text-sm text-muted-foreground">
-                  Based on the interview, we suggest consulting a specialist in {result.suggestedSpecialty}.
+                  D'après l'entretien, nous suggérons de consulter un spécialiste en {result.suggestedSpecialty}.
                 </p>
               </CardContent>
             </Card>

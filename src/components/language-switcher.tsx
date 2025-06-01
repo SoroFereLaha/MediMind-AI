@@ -1,7 +1,6 @@
 
 'use client';
-// import { useLocale, useTranslations } from 'next-intl'; // Removed
-// import { useRouter, usePathname } from 'next-intl/navigation'; // Removed
+
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,22 +9,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Languages } from 'lucide-react';
-// import { locales } from '@/i18n'; // Removed, or keep if needed for a non-functional display
 
-const locales = ['en', 'fr', 'ar']; // Keep for display purposes if menu items are still shown
+const displayLocales = [ // Pour l'affichage, même si la fonctionnalité est désactivée
+  { code: 'fr', name: "Français" },
+  { code: 'en', name: "Anglais" },
+  { code: 'ar', name: "Arabe" },
+];
 
 export function LanguageSwitcher() {
-  // const t = useTranslations('LanguageSwitcher'); // Removed
-  // const locale = useLocale(); // Removed
-  // const router = useRouter(); // Removed
-  // const pathname = usePathname(); // Removed
-
-  const toggleLanguageLabel = "Change language"; // Hardcoded
-  const currentLocale = "en"; // Hardcoded default or dummy
-
-  // const changeLocale = (nextLocale: string) => { // Functionality disabled
-  //   router.replace(pathname, { locale: nextLocale });
-  // };
+  const toggleLanguageLabel = "Changer de langue";
+  const currentDisplayLocale = "Français"; // Puisque l'application est maintenant en français uniquement
 
   return (
     <DropdownMenu>
@@ -36,16 +29,12 @@ export function LanguageSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {locales.map((loc) => (
+        {displayLocales.map((loc) => (
           <DropdownMenuItem
-            key={loc}
-            // onClick={() => changeLocale(loc)} // Functionality disabled
-            disabled={currentLocale === loc || true} // Always disabled
+            key={loc.code}
+            disabled // La sélection de langue est désactivée
           >
-            {loc === 'en' && "English"}
-            {loc === 'fr' && "French"}
-            {loc === 'ar' && "Arabic"}
-            {!['en', 'fr', 'ar'].includes(loc) && loc} 
+            {loc.name}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

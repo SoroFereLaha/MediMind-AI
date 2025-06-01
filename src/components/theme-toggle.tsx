@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-// import { useTranslations } from 'next-intl'; // Removed
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,12 +14,11 @@ import {
 
 export function ThemeToggle() {
   const { setTheme } = useTheme();
-  // const t = useTranslations('ThemeToggle'); // Removed
 
-  const toggleThemeLabel = "Toggle theme"; // Hardcoded
-  const lightLabel = "Light"; // Hardcoded
-  const darkLabel = "Dark"; // Hardcoded
-  const systemLabel = "System"; // Hardcoded
+  const toggleThemeLabel = "Changer de thème";
+  const lightLabel = "Clair";
+  const darkLabel = "Sombre";
+  const systemLabel = "Système";
 
 
   return (
