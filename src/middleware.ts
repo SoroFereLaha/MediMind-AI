@@ -1,43 +1,22 @@
 
-import createMiddleware from 'next-intl/middleware';
-import { locales, defaultLocale } from './i18n';
-import type { NextRequest } from 'next/server';
+// import type { NextRequest } from 'next/server';
+// import type { NextResponse } from 'next/server';
 
-console.log('@@@@@@@@@@ [middleware.ts] Initializing next-intl middleware (top level) @@@@@@@@@@');
-console.log(`[middleware.ts] Config: defaultLocale: ${defaultLocale}, locales: ${locales.join(', ')}`);
-
-const intlMiddleware = createMiddleware({
-  locales,
-  defaultLocale,
-  localePrefix: 'as-needed', // This is important
-});
-
-export default function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  console.log(`[middleware.ts] Request received for: ${pathname}`);
-
-  // Check if the path is for a static file or API route to potentially bypass intlMiddleware
-  if (
-    pathname.startsWith('/api/') ||
-    pathname.startsWith('/_next/static/') ||
-    pathname.startsWith('/_next/image/') ||
-    pathname.includes('.') // Generally, paths with dots are for files
-  ) {
-    console.log(`[middleware.ts] Bypassing next-intl middleware for path: ${pathname}`);
-    return; // Allow request to proceed without i18n handling
-  }
-
-  console.log(`[middleware.ts] Applying next-intl middleware for path: ${pathname}`);
-  const response = intlMiddleware(request);
-  console.log(`[middleware.ts] next-intl middleware processed. Response status: ${response.status}, Location header: ${response.headers.get('Location')}`);
-  return response;
+// This is a placeholder middleware.
+// If you don't need any middleware functionality, you can delete this file.
+export function middleware(request: Request) {
+  // The middleware function must exist, but it can do nothing.
+  // console.log('Middleware processed request:', request.url);
+  return;
 }
 
-export const config = {
-  // Match all pathnames except for
-  // - … if they start with `/api`, `/_next` or `/_vercel` (already handled by above if-condition but good for explicit exclusion)
-  // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: ['/((?!api|_next/static|_next/image|_vercel|.*\\..*).*)']
-};
+// The config object is optional.
+// If omitted, the middleware applies to all paths by default.
+// To restrict it, uncomment and define a matcher.
+// export const config = {
+//   matcher: [
+//     // Example: Match all paths except for API routes, static files, and image optimization files
+//     // '/((?!api|_next/static|_next/image|favicon.ico).*)'
+//   ],
+// };
 
-console.log('[middleware.ts] Middleware configured with matcher:', JSON.stringify(config.matcher));
