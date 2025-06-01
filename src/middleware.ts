@@ -1,8 +1,7 @@
-// import type { NextRequest } from 'next/server';
-// import type { NextResponse } from 'next/server';
 
 // This is a placeholder middleware.
 // If you don't need any middleware functionality, you can delete this file.
+// It no longer references next-intl.
 export function middleware(request: Request) {
   // The middleware function must exist, but it can do nothing.
   // console.log('Middleware processed request:', request.url);
