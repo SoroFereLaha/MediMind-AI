@@ -19,4 +19,3 @@ export function middleware(request: Request) {
 //     // '/((?!api|_next/static|_next/image|favicon.ico).*)'
 //   ],
 // };
-
