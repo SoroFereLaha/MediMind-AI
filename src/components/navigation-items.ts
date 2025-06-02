@@ -1,6 +1,6 @@
 
 import type { LucideIcon } from 'lucide-react';
-import { Home, UserCheck, BrainCircuit, MessageSquareHeart, ShieldCheck, Salad } from 'lucide-react'; // Ajout de Salad
+import { Home, UserCheck, BrainCircuit, MessageSquareHeart, ShieldCheck } from 'lucide-react';
 
 export interface NavItem {
   label: string;
@@ -29,15 +29,9 @@ export const getNavigationItems = (): NavItem[] => [
     match: 'startsWith',
   },
   {
-    label: "Recommandations (IA Générale)", // Label mis à jour pour distinguer
+    label: "Recommandations (IA Générale)",
     href: '/recommendations',
     icon: MessageSquareHeart,
-    match: 'startsWith',
-  },
-  {
-    label: "Conseils Nutritionnels (API)", // Nouvelle page
-    href: '/nutrition',
-    icon: Salad, // Nouvelle icône
     match: 'startsWith',
   },
 ];
