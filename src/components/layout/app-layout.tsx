@@ -46,6 +46,8 @@ function Logo() {
 function NavLink({ item }: { item: NavItem }) {
   const pathname = usePathname();
   let isActive;
+  // Pour la page d'accueil, on veut une correspondance exacte.
+  // Pour les autres pages, startsWith est généralement bien.
   if (item.href === '/') {
     isActive = pathname === '/';
   } else {
@@ -105,7 +107,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur md:px-6 lg:hidden">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur md:hidden">
           <Logo />
           <SidebarTrigger asChild>
              <Button variant="ghost" size="icon">
