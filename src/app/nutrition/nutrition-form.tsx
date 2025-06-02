@@ -45,10 +45,10 @@ export function NutritionForm() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Salad className="h-6 w-6 text-primary" />
-          Vos Paramètres pour les Recommandations
+          Vos Paramètres pour les Recommandations Alimentaires
         </CardTitle>
         <CardDescription>
-          Fournissez votre localisation et la date (optionnel) pour obtenir des recommandations alimentaires.
+          Fournissez des informations contextuelles optionnelles (localisation, date) pour affiner les recommandations alimentaires de l'API. L'API utilisera aussi vos données de santé enregistrées.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -94,7 +94,7 @@ export function NutritionForm() {
               onChange={(e) => setDate(e.target.value)}
               className="text-base"
             />
-            <p className="text-xs text-muted-foreground">Format attendu : AAAA-MM-JJ (ISO 8601)</p>
+            <p className="text-xs text-muted-foreground">Format attendu : AAAA-MM-JJ. Utile pour des recommandations saisonnières.</p>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4">
@@ -138,7 +138,7 @@ export function NutritionForm() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5" />
-                  Suggestions d'Aliments
+                  Suggestions d'Aliments (IDs)
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -156,7 +156,7 @@ export function NutritionForm() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Message</CardTitle>
+                <CardTitle>Message de l'API</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-base whitespace-pre-wrap">{result.message}</p>

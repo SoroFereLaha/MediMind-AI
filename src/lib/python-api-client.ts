@@ -3,9 +3,9 @@
 // Veuillez les remplacer par vos propres valeurs.
 // Pour la production, les identifiants ne doivent JAMAIS être codés en dur côté client.
 
-const API_BASE_URL = 'http://localhost:8000/v1'; // REMPLACEZ localhost:8000 par le port correct de VOTRE API
-const API_USER = 'testuser@example.com'; // REMPLACEZ par votre email de test
-const API_PASS = 'testpassword'; // REMPLACEZ par votre mot de passe de test
+const API_BASE_URL = 'http://localhost:5000/v1'; // Port mis à jour
+const API_USER = 'test@example.com'; // Mis à jour avec vos identifiants de test
+const API_PASS = '123456'; // Mis à jour avec vos identifiants de test
 
 const BASIC_AUTH_TOKEN = Buffer.from(`${API_USER}:${API_PASS}`).toString('base64');
 
@@ -32,13 +32,15 @@ export async function getFoodRecommendationFromApi(
   params: FoodRecommendationParams
 ): Promise<FoodRecommendationResponse> {
   const queryParams = new URLSearchParams();
-  if (params.location_lat !== undefined) queryParams.append('location_lat', String(params.location_lat));
-  if (params.location_lon !== undefined) queryParams.append('location_lon', String(params.location_lon));
+  if (params.location_lat !== undefined && String(params.location_lat).trim() !== '') queryParams.append('location_lat', String(params.location_lat));
+  if (params.location_lon !== undefined && String(params.location_lon).trim() !== '') queryParams.append('location_lon', String(params.location_lon));
   if (params.date) queryParams.append('date', params.date);
 
   const url = `${API_BASE_URL}/getFoodRecommendation?${queryParams.toString()}`;
 
-  console.log(`Calling API: ${url}`); // Pour le débogage
+  console.log(`Appel API : ${url}`); // Pour le débogage
+  console.log(`Avec token : Basic ${BASIC_AUTH_TOKEN}`);
+
 
   const response = await fetch(url, {
     method: 'GET',
@@ -51,11 +53,16 @@ export async function getFoodRecommendationFromApi(
   if (!response.ok) {
     let errorData: ApiErrorResponse = { error_message: `Erreur HTTP: ${response.status} ${response.statusText}` };
     try {
-      errorData = await response.json();
+      const errorJson = await response.json();
+      // Vérifier si errorJson est bien un objet et a la propriété error_message
+      if (typeof errorJson === 'object' && errorJson !== null && 'error_message' in errorJson) {
+        errorData = errorJson as ApiErrorResponse;
+      }
     } catch (e) {
       // Si le corps de l'erreur n'est pas du JSON, utiliser le message HTTP standard
+      console.error("Impossible de parser la réponse d'erreur JSON:", e);
     }
-    console.error('API Error:', errorData);
+    console.error('Erreur API:', errorData);
     throw new Error(errorData.error_message || `Erreur lors de la récupération des recommandations : ${response.status}`);
   }
 
@@ -64,3 +71,4 @@ export async function getFoodRecommendationFromApi(
 
 // Plus tard, nous pourrons ajouter ici d'autres fonctions pour appeler d'autres endpoints de votre API
 // comme getSleepRecommendation, getActivityRecommendation, etc.
+// Et idéalement, une fonction pour gérer l'authentification et stocker le token/session.
