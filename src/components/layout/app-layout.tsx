@@ -15,12 +15,12 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
-  useSidebar, // Import useSidebar
+  useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { getNavigationItems, getFooterNavigationItems, type NavItem } from '@/components/navigation-items';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Menu } from 'lucide-react'; // Import Menu icon
+import { Menu } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageSwitcher } from '@/components/language-switcher';
 
@@ -64,14 +64,27 @@ function NavLink({ item }: { item: NavItem }) {
   );
 }
 
-// Internal component to conditionally render the mobile header
 function ConditionalMobileHeader() {
-  const { isMobile } = useSidebar();
+  const sidebarContext = useSidebar();
+  const isMobile = sidebarContext.isMobile; // isMobile from useIsMobile() can be undefined initially
 
-  if (!isMobile) {
-    return null; // Don't render on desktop
+  const [clientIsReady, setClientIsReady] = React.useState(false);
+  React.useEffect(() => {
+    setClientIsReady(true);
+  }, []);
+
+  if (!clientIsReady || typeof isMobile === 'undefined') {
+    // Don't render anything until client is ready AND isMobile has a determined boolean value
+    // Returning null can prevent hydration errors for components relying on window dimensions
+    return null;
   }
 
+  if (!isMobile) {
+    // If it's not mobile (according to the hook), don't render this header
+    return null;
+  }
+
+  // If client is ready AND it is mobile, render the header
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur">
       <Logo />
@@ -126,7 +139,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <ConditionalMobileHeader /> {/* Use the new conditional header */}
+        <ConditionalMobileHeader />
         <main className="flex-1 p-4 md:p-6 lg:p-8">
           {children}
         </main>
