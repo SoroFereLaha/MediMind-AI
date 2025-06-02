@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
-  Loader2, Lightbulb, FileText, Users, Heart, Brain, Lung, Eye, Baby, Droplets, Bone, Ear, BrainCog, HeartHandshake, Ribbon, Droplet, ShieldBan 
+  Loader2, Lightbulb, FileText, Users, Heart, Brain, AirVent, Eye, Baby, Droplets, Bone, Ear, BrainCog, HeartHandshake, Ribbon, Droplet, ShieldBan 
 } from 'lucide-react';
 import { getSpecialistInsights, type SpecialistInsightsOutput } from '@/ai/flows/ai-specialist-insights';
 // To translate this form, import and use useTranslations from 'next-intl'
@@ -23,12 +23,12 @@ function StomachIcon(props: React.SVGProps<SVGSVGElement>) { return <svg {...pro
 function SkinIcon(props: React.SVGProps<SVGSVGElement>) { return <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a10 10 0 0 0-7.07 17.07A10 10 0 1 0 12 2Z"/><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>;}
 
 const specialties = [
-  { value: 'Cardiology', label: 'Cardiology', icon: Heart }, // Labels need translation for this file if i18n is re-enabled
+  { value: 'General Practice', label: 'General Practice', icon: Users}, // Labels need translation for this file if i18n is re-enabled
+  { value: 'Cardiology', label: 'Cardiology', icon: Heart },
   { value: 'Neurology', label: 'Neurology', icon: Brain },
-  { value: 'Pulmonology', label: 'Pulmonology', icon: Lung },
+  { value: 'Pulmonology', label: 'Pulmonology', icon: AirVent },
   { value: 'Gastroenterology', label: 'Gastroenterology', icon: StomachIcon },
   { value: 'Dermatology', label: 'Dermatology', icon: SkinIcon },
-  { value: 'General Practice', label: 'General Practice', icon: Users},
   { value: 'Ophthalmology', label: 'Ophthalmology', icon: Eye },
   { value: 'Pediatrics', label: 'Pediatrics', icon: Baby },
   { value: 'Endocrinology', label: 'Endocrinology', icon: Droplets },
@@ -68,6 +68,8 @@ export function InsightsForm() {
       setIsLoading(false);
     }
   };
+  
+  const selectedSpecialtyLabel = specialties.find(s => s.value === specialty)?.label || specialty;
 
   return (
     <Card className="shadow-lg">
@@ -139,7 +141,7 @@ export function InsightsForm() {
 
       {result && (
         <div className="p-6 border-t">
-           <h3 className="font-headline text-2xl font-semibold mb-4 text-primary">{specialties.find(s => s.value === specialty)?.label || specialty} Insights</h3>
+           <h3 className="font-headline text-2xl font-semibold mb-4 text-primary">{selectedSpecialtyLabel} Insights</h3>
           <div className="space-y-4">
             <Card>
               <CardHeader>

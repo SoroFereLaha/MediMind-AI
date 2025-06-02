@@ -8,8 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Loader2, Lightbulb, FileText, Users, Heart, Brain, Lung, Eye, Baby, Droplets, Bone, Ear, BrainCog, HeartHandshake, Ribbon, Droplet, ShieldBan 
+import {
+  Loader2, Lightbulb, FileText, Users, Heart, Brain, AirVent, Eye, Baby, Droplets, Bone, Ear, BrainCog, HeartHandshake, Ribbon, Droplet, ShieldBan
 } from 'lucide-react';
 import { getSpecialistInsights, type SpecialistInsightsOutput } from '@/ai/flows/ai-specialist-insights';
 
@@ -18,12 +18,12 @@ function StomachIcon(props: React.SVGProps<SVGSVGElement>) { return <svg {...pro
 function SkinIcon(props: React.SVGProps<SVGSVGElement>) { return <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a10 10 0 0 0-7.07 17.07A10 10 0 1 0 12 2Z"/><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>;}
 
 const specialties = [
+  { value: 'General Practice', label: 'Médecine Générale', icon: Users},
   { value: 'Cardiology', label: 'Cardiologie', icon: Heart },
   { value: 'Neurology', label: 'Neurologie', icon: Brain },
-  { value: 'Pulmonology', label: 'Pneumologie', icon: Lung },
+  { value: 'Pulmonology', label: 'Pneumologie', icon: AirVent },
   { value: 'Gastroenterology', label: 'Gastro-entérologie', icon: StomachIcon },
   { value: 'Dermatology', label: 'Dermatologie', icon: SkinIcon },
-  { value: 'General Practice', label: 'Médecine Générale', icon: Users},
   { value: 'Ophthalmology', label: 'Ophtalmologie', icon: Eye },
   { value: 'Pediatrics', label: 'Pédiatrie', icon: Baby },
   { value: 'Endocrinology', label: 'Endocrinologie', icon: Droplets },
@@ -63,6 +63,8 @@ export function InsightsForm() {
       setIsLoading(false);
     }
   };
+
+  const selectedSpecialtyLabel = specialties.find(s => s.value === specialty)?.label || specialty;
 
   return (
     <Card className="shadow-lg">
@@ -134,7 +136,7 @@ export function InsightsForm() {
 
       {result && (
         <div className="p-6 border-t">
-          <h3 className="font-headline text-2xl font-semibold mb-4 text-primary">Avis de {specialties.find(s => s.value === specialty)?.label || specialty}</h3>
+          <h3 className="font-headline text-2xl font-semibold mb-4 text-primary">Avis de {selectedSpecialtyLabel}</h3>
           <div className="space-y-4">
             <Card>
               <CardHeader>
