@@ -15,11 +15,12 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
+  useSidebar, // Import useSidebar
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { getNavigationItems, getFooterNavigationItems, type NavItem } from '@/components/navigation-items';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Menu } from 'lucide-react';
+import { Menu } from 'lucide-react'; // Import Menu icon
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageSwitcher } from '@/components/language-switcher';
 
@@ -42,12 +43,9 @@ function Logo() {
   );
 }
 
-
 function NavLink({ item }: { item: NavItem }) {
   const pathname = usePathname();
   let isActive;
-  // Pour la page d'accueil, on veut une correspondance exacte.
-  // Pour les autres pages, startsWith est généralement bien.
   if (item.href === '/') {
     isActive = pathname === '/';
   } else {
@@ -63,6 +61,27 @@ function NavLink({ item }: { item: NavItem }) {
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
+  );
+}
+
+// Internal component to conditionally render the mobile header
+function ConditionalMobileHeader() {
+  const { isMobile } = useSidebar();
+
+  if (!isMobile) {
+    return null; // Don't render on desktop
+  }
+
+  return (
+    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur">
+      <Logo />
+      <SidebarTrigger asChild>
+         <Button variant="ghost" size="icon">
+            <Menu />
+            <span className="sr-only">Toggle Menu</span>
+          </Button>
+      </SidebarTrigger>
+    </header>
   );
 }
 
@@ -107,15 +126,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur md:hidden">
-          <Logo />
-          <SidebarTrigger asChild>
-             <Button variant="ghost" size="icon">
-                <Menu />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-          </SidebarTrigger>
-        </header>
+        <ConditionalMobileHeader /> {/* Use the new conditional header */}
         <main className="flex-1 p-4 md:p-6 lg:p-8">
           {children}
         </main>
