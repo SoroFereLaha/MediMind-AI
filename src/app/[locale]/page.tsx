@@ -72,6 +72,7 @@ export default async function HomePage({ params: routeParams }: { params: { loca
             height={400}
             className="rounded-lg shadow-md object-cover"
             data-ai-hint="medical AI"
+            priority
           />
         </div>
       </section>
