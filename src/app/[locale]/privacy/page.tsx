@@ -6,75 +6,68 @@ import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ShieldCheck, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
-// To translate this page, import and use useTranslations from 'next-intl'
-// Example:
-// import { useTranslations } from 'next-intl';
-// const t = useTranslations('PrivacyPage');
-// Then use t('title'), t('description'), t('commitmentTitle'), t('p1'), etc.
-// And for the consent part: t('consentManagementTitle'), t('consentExplanation1'), etc.
 
-const LOCAL_STORAGE_CONSENT_KEY = 'medimind_contextual_data_consent_v1'; // Should be same key as non-locale
+const LOCAL_STORAGE_CONSENT_KEY = 'medimind_contextual_data_consent_v1';
 type ConsentStatus = 'accepted' | 'refused' | 'pending';
 
 export default function PrivacyPage() {
   const [consentStatus, setConsentStatus] = React.useState<ConsentStatus>('pending');
   const [isClient, setIsClient] = React.useState(false);
 
-  // Placeholder for translations - replace with actual useTranslations if i18n is re-enabled
   const t = (key: string, defaultText?: string) => {
     const translations: Record<string, string> = {
-      pageTitle: "Data Privacy at MediMind AI",
-      pageDescription: "Your trust and privacy are paramount to us.",
-      commitmentTitle: "Our Commitment to Your Privacy",
-      commitmentP1: "At MediMind AI, we are deeply committed to protecting your personal and health information. We understand the sensitivity of your data and have implemented robust security measures and privacy practices to ensure its confidentiality and integrity.",
-      dataYouProvideTitle: "Data You Provide Directly",
-      dataYouProvideP1: "We collect information that you voluntarily enter into our forms. This data is essential for our AIs to provide you with relevant analyses and recommendations. It typically includes:",
-      dataYouProvideL1: "<strong>Primary health information:</strong> Current symptoms, personal and family medical history, allergies, current medications.",
-      dataYouProvideL2: "<strong>Personal profile:</strong> Age, sex (as you declare them).",
-      dataYouProvideL3: "<strong>Lifestyle data (if provided):</strong> Activity level, sleep quality.",
-      dataYouProvideL4: "<strong>Specific health goals:</strong> If you communicate them to us.",
-      dataYouProvideP2: "This information is used solely for the purpose of providing you with simulated interviews, AI-driven analysis, simulated specialist insights, and contextual recommendations, as described in our services.",
+      pageTitle: "Confidentialité des Données chez MediMind IA",
+      pageDescription: "Votre confiance et votre vie privée sont primordiales pour nous.",
+      commitmentTitle: "Notre Engagement envers Votre Vie Privée",
+      commitmentP1: "Chez MediMind IA, nous sommes profondément engagés à protéger vos informations personnelles et de santé. Nous comprenons la sensibilité de vos données et avons mis en place des mesures de sécurité robustes et des pratiques de confidentialité pour assurer leur confidentialité et leur intégrité.",
+      dataYouProvideTitle: "Données que Vous Nous Fournissez Directement",
+      dataYouProvideP1: "Nous collectons les informations que vous saisissez volontairement dans nos formulaires. Ces données sont essentielles pour que nos IA puissent vous fournir des analyses et recommandations pertinentes. Elles incluent typiquement :",
+      dataYouProvideL1: "<strong>Informations de santé primaires :</strong> Symptômes actuels, antécédents médicaux personnels et familiaux, allergies, médicaments en cours.",
+      dataYouProvideL2: "<strong>Profil personnel :</strong> Âge, sexe (tels que vous les déclarez).",
+      dataYouProvideL3: "<strong>Données de style de vie (si fournies) :</strong> Niveau d'activité, qualité du sommeil.",
+      dataYouProvideL4: "<strong>Objectifs de santé spécifiques :</strong> Si vous nous les communiquez.",
+      dataYouProvideP2: "Ces informations sont utilisées uniquement dans le but de vous fournir des entretiens simulés, des analyses par l'IA, des avis de spécialistes simulés, et des recommandations contextuelles, comme décrit dans nos services.",
       
-      potentialContextualDataTitle: "Potential Contextual Data",
-      potentialContextualDataP1: "To enrich your recommendations and make them more relevant, MediMind AI might, with your explicit consent where necessary, use or infer certain contextual data. We distinguish several categories:",
+      potentialContextualDataTitle: "Données Contextuelles Potentielles",
+      potentialContextualDataP1: "Pour enrichir vos recommandations et les rendre plus pertinentes, MediMind IA pourrait, avec votre consentement explicite lorsque nécessaire, utiliser ou déduire certaines données contextuelles. Nous distinguons plusieurs catégories :",
       
-      baseTechnicalDataTitle: "1. Basic Technical and Temporal Data",
-      baseTechnicalDataP1: "This data is generally necessary for the proper functioning of the service or is inferred during your interaction to provide a standard user experience:",
-      baseTechnicalDataL1: "<strong>Date and Time of request:</strong> To temporally contextualize interactions.",
-      baseTechnicalDataL2: "<strong>Day of the week:</strong> Deduced from the date.",
-      baseTechnicalDataL3: "<strong>Approximate timezone:</strong> To adjust temporal information if relevant.",
-      baseTechnicalDataL4: "<strong>Device and browser information (via User-Agent):</strong> Device type (mobile, desktop), operating system, browser type and version. This is used to optimize display, diagnose technical issues, and improve our services.",
-      baseTechnicalDataP2: "The use of this data is inherent to the functioning of a web service and generally covered by the acceptance of this policy.",
+      baseTechnicalDataTitle: "1. Données Techniques et Temporelles de Base",
+      baseTechnicalDataP1: "Ces données sont généralement nécessaires au bon fonctionnement du service ou sont déduites lors de votre interaction pour fournir une expérience utilisateur standard :",
+      baseTechnicalDataL1: "<strong>Date et Heure de la requête :</strong> Pour contextualiser temporellement les interactions.",
+      baseTechnicalDataL2: "<strong>Jour de la semaine :</strong> Déduit de la date.",
+      baseTechnicalDataL3: "<strong>Fuseau horaire approximatif :</strong> Pour ajuster les informations temporelles si pertinent.",
+      baseTechnicalDataL4: "<strong>Informations sur l'appareil et le navigateur (via User-Agent) :</strong> Type d'appareil (mobile, ordinateur), système d'exploitation, type et version du navigateur. Ceci est utilisé pour optimiser l'affichage, diagnostiquer des problèmes techniques et améliorer nos services.",
+      baseTechnicalDataP2: "L'utilisation de ces données est inhérente au fonctionnement d'un service web et généralement couverte par l'acceptation de cette politique.",
 
-      automatedContextualDataTitle: "2. Automated Contextual Data (Subject to Your Consent)",
-      automatedContextualDataP1: "To go further in personalization, certain data could be collected or inferred automatically, but <strong>only if you explicitly consent</strong> (see the 'Manage Your Consent' section below) and if the technical functionality is implemented in the application. This data includes:",
-      automatedContextualDataL1: "<strong>Geographic location (approximate or precise):</strong>",
-      automatedContextualDataL1_1: "Approximate (e.g., city, deduced from IP address): Could be used to adapt advice to general regional factors.",
-      automatedContextualDataL1_2: "Precise (via browser geolocation API): Would require additional browser permission. Could be used for highly localized advice (specific weather, air quality, nearby activity suggestions).",
-      automatedContextualDataL2: "<strong>(Future functionality) Data from linked third-party services:</strong> If you choose to link MediMind AI to other services (e.g., health apps, calendars), we would only collect data from these services with your explicit authorization for each connection.",
-      automatedContextualDataP2: "<strong>Important Clarification:</strong> Currently, the MediMind AI web application <strong>does not implement</strong> a technical mechanism for the automatic collection of your precise geographic location directly from the browser, nor connection to third-party services. The consent section below concerns your agreement in principle for future functionalities.",
+      automatedContextualDataTitle: "2. Données Contextuelles Automatisées (Soumises à Votre Consentement)",
+      automatedContextualDataP1: "Pour aller plus loin dans la personnalisation, certaines données pourraient être collectées ou déduites automatiquement, mais <strong>uniquement si vous y consentez explicitement</strong> (voir la section \"Gestion de Votre Consentement\" ci-dessous) et si la fonctionnalité technique est implémentée dans l'application. Ces données incluent :",
+      automatedContextualDataL1: "<strong>Localisation géographique (approximative ou précise) :</strong>",
+      automatedContextualDataL1_1: "Approximative (ex: ville, déduite de l'adresse IP) : Pourrait être utilisée pour adapter les conseils à des facteurs régionaux généraux.",
+      automatedContextualDataL1_2: "Précise (via API de géolocalisation du navigateur) : Nécessiterait une autorisation supplémentaire du navigateur. Pourrait être utilisée pour des conseils très localisés (météo spécifique, qualité de l'air, suggestions d'activités à proximité).",
+      automatedContextualDataL2: "<strong>(Fonctionnalité future) Données de services tiers connectés :</strong> Si vous choisissez de lier MediMind IA à d'autres services (ex: applications de santé, calendriers), nous ne collecterions des données de ces services qu'avec votre autorisation explicite pour chaque connexion.",
+      automatedContextualDataP2: "<strong>Précision importante :</strong> Actuellement, l'application web MediMind IA <strong>ne met pas en œuvre</strong> de mécanisme technique pour la collecte automatique de votre localisation géographique précise directement depuis le navigateur, ni de connexion à des services tiers. La section de consentement ci-dessous concerne votre accord de principe pour de futures fonctionnalités.",
       
-      consentManagementTitle: "Manage Your Consent for Automated Contextual Data Collection",
-      consentExplanation1: "To help us provide you with even more personalized and proactive recommendations, you can consent to MediMind AI (in its future improved versions) attempting to automatically collect and use certain contextual data mentioned above (primarily location and device information).",
-      consentExplanation2: "If you accept, this data could be used to enrich the information sent to our AIs, without you needing to enter it manually. If you refuse, or if you do not make a choice, only the information you explicitly enter in the forms will be used to generate recommendations.",
-      consentExplanation3: "You can change your choice at any time.",
-      consentStatusLoading: "Loading your consent preferences...",
-      consentStatusAccepted: "You have accepted automated contextual data collection to enhance your recommendations.",
-      consentStatusRefused: "You have refused automated contextual data collection. Only data you actively enter will be used.",
-      consentStatusPending: "Your choice regarding automated contextual data collection is pending.",
-      acceptButton: "I Accept Automated Collection",
-      refuseButton: "I Refuse Automated Collection",
-      consentNote: "Note: This choice is stored locally in your browser. It does not change the fields in the current forms but influences how data might be collected and used by future versions of the application.",
+      consentManagementTitle: "Gestion de Votre Consentement pour la Collecte de Données Contextuelles Automatisées",
+      consentExplanation1: "Pour nous aider à vous fournir des recommandations encore plus personnalisées et proactives, vous pouvez consentir à ce que MediMind IA (dans ses futures versions améliorées) tente de collecter et d'utiliser automatiquement certaines données contextuelles mentionnées ci-dessus (principalement la localisation et les informations sur l'appareil).",
+      consentExplanation2: "Si vous acceptez, ces données pourraient être utilisées pour enrichir les informations envoyées à nos IA, sans que vous ayez à les saisir manuellement. Si vous refusez, ou si vous ne faites pas de choix, seules les informations que vous saisissez explicitement dans les formulaires seront utilisées pour générer des recommandations.",
+      consentExplanation3: "Vous pouvez modifier votre choix à tout moment.",
+      consentStatusLoading: "Chargement de vos préférences de consentement...",
+      consentStatusAccepted: "Vous avez accepté la collecte automatisée de données contextuelles pour améliorer vos recommandations.",
+      consentStatusRefused: "Vous avez refusé la collecte automatisée de données contextuelles. Seules les données que vous saisissez activement seront utilisées.",
+      consentStatusPending: "Votre choix concernant la collecte automatisée de données contextuelles est en attente.",
+      acceptButton: "J'accepte la collecte automatisée",
+      refuseButton: "Je refuse la collecte automatisée",
+      consentNote: "Note : Ce choix est stocké localement dans votre navigateur. Il ne modifie pas les champs des formulaires actuels, mais influence la manière dont les données pourraient être collectées et utilisées par de futures versions de l'application.",
 
-      dataSecurityTitle: "Data Security",
-      dataSecurityP1: "We employ industry-standard security safeguards to protect your data from unauthorized access, disclosure, alteration, or destruction.",
-      dataSharingTitle: "Data Sharing",
-      dataSharingP1: "We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties without your explicit consent, except in the following cases: trusted service providers who assist us in operating our application (subject to confidentiality agreements), or if required by law.",
-      yourControlTitle: "Your Control",
-      yourControlP1: "In addition to managing consent above, you have the right to request access to, correction of, or deletion of your entered personal data, subject to applicable legal requirements.",
-      policyUpdatesTitle: "Updates to This Policy",
-      policyUpdatesP1: "We may update this privacy policy from time to time. We will notify you of any significant changes by posting the new policy on this page.",
-      contactP1: "If you have any questions about our privacy practices, please contact us."
+      dataSecurityTitle: "Sécurité des Données",
+      dataSecurityP1: "Nous employons des mesures de sécurité conformes aux normes de l'industrie pour protéger vos données contre l'accès, la divulgation, l'altération ou la destruction non autorisés.",
+      dataSharingTitle: "Partage des Données",
+      dataSharingP1: "Nous ne vendons, n'échangeons ni ne transférons d'aucune autre manière vos informations personnelles identifiables à des tiers sans votre consentement explicite, sauf dans les cas suivants : fournisseurs de services de confiance qui nous aident à exploiter notre application (soumis à des accords de confidentialité), ou si la loi l'exige.",
+      yourControlTitle: "Votre Contrôle",
+      yourControlP1: "Outre la gestion du consentement ci-dessus, vous avez le droit de demander l'accès, la correction ou la suppression de vos données personnelles saisies, sous réserve des exigences légales applicables.",
+      policyUpdatesTitle: "Mises à Jour de cette Politique",
+      policyUpdatesP1: "Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons de tout changement important en publiant la nouvelle politique sur cette page.",
+      contactP1: "Si vous avez des questions sur nos pratiques de confidentialité, veuillez nous contacter."
     };
     return translations[key] || defaultText || `[${key}]`;
   };
@@ -124,13 +117,13 @@ export default function PrivacyPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title={t('pageTitle', "Data Privacy at MediMind AI")}
-        description={t('pageDescription', "Your trust and privacy are paramount to us.")}
+        title={t('pageTitle')}
+        description={t('pageDescription')}
         icon={ShieldCheck}
       />
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>{t('commitmentTitle', "Our Commitment to Your Privacy")}</CardTitle>
+          <CardTitle>{t('commitmentTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-foreground/80">
           <p>

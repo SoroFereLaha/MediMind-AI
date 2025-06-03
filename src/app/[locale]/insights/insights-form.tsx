@@ -12,33 +12,27 @@ import {
   Loader2, Lightbulb, FileText, Users, Heart, Brain, AirVent, Eye, Baby, Droplets, Bone, Ear, BrainCog, HeartHandshake, Ribbon, Droplet, ShieldBan 
 } from 'lucide-react';
 import { getSpecialistInsights, type SpecialistInsightsOutput } from '@/ai/flows/ai-specialist-insights';
-// To translate this form, import and use useTranslations from 'next-intl'
-// Example:
-// import { useTranslations } from 'next-intl';
-// const t = useTranslations('InsightsForm');
-// Then use t('someKey') for labels, placeholders, button text etc.
 
-// Icônes SVG personnalisées conservées car pas d'équivalent direct simple dans Lucide
 function StomachIcon(props: React.SVGProps<SVGSVGElement>) { return <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 15c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5z"/><path d="M12 10v4m-2-2h4"/></svg>;}
 function SkinIcon(props: React.SVGProps<SVGSVGElement>) { return <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a10 10 0 0 0-7.07 17.07A10 10 0 1 0 12 2Z"/><path d="M12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/></svg>;}
 
 const specialties = [
-  { value: 'General Practice', label: 'General Practice', icon: Users}, // Labels need translation for this file if i18n is re-enabled
-  { value: 'Cardiology', label: 'Cardiology', icon: Heart },
-  { value: 'Neurology', label: 'Neurology', icon: Brain },
-  { value: 'Pulmonology', label: 'Pulmonology', icon: AirVent },
-  { value: 'Gastroenterology', label: 'Gastroenterology', icon: StomachIcon },
-  { value: 'Dermatology', label: 'Dermatology', icon: SkinIcon },
-  { value: 'Ophthalmology', label: 'Ophthalmology', icon: Eye },
-  { value: 'Pediatrics', label: 'Pediatrics', icon: Baby },
-  { value: 'Endocrinology', label: 'Endocrinology', icon: Droplets },
-  { value: 'Rheumatology', label: 'Rheumatology', icon: Bone },
-  { value: 'Otorhinolaryngology', label: 'Otorhinolaryngology (ENT)', icon: Ear },
-  { value: 'Psychiatry', label: 'Psychiatry', icon: BrainCog },
-  { value: 'Gynecology', label: 'Gynecology', icon: HeartHandshake },
-  { value: 'Oncology', label: 'Oncology', icon: Ribbon },
-  { value: 'Urology', label: 'Urology', icon: Droplet },
-  { value: 'Allergology', label: 'Allergology', icon: ShieldBan },
+  { value: 'General Practice', label: 'Médecine Générale', icon: Users},
+  { value: 'Cardiology', label: 'Cardiologie', icon: Heart },
+  { value: 'Neurology', label: 'Neurologie', icon: Brain },
+  { value: 'Pulmonology', label: 'Pneumologie', icon: AirVent },
+  { value: 'Gastroenterology', label: 'Gastro-entérologie', icon: StomachIcon },
+  { value: 'Dermatology', label: 'Dermatologie', icon: SkinIcon },
+  { value: 'Ophthalmology', label: 'Ophtalmologie', icon: Eye },
+  { value: 'Pediatrics', label: 'Pédiatrie', icon: Baby },
+  { value: 'Endocrinology', label: 'Endocrinologie', icon: Droplets },
+  { value: 'Rheumatology', label: 'Rhumatologie', icon: Bone },
+  { value: 'Otorhinolaryngology', label: 'ORL', icon: Ear },
+  { value: 'Psychiatry', label: 'Psychiatrie', icon: BrainCog },
+  { value: 'Gynecology', label: 'Gynécologie', icon: HeartHandshake },
+  { value: 'Oncology', label: 'Oncologie', icon: Ribbon },
+  { value: 'Urology', label: 'Urologie', icon: Droplet },
+  { value: 'Allergology', label: 'Allergologie', icon: ShieldBan },
 ];
 
 
@@ -52,7 +46,7 @@ export function InsightsForm() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!specialty) {
-      setError('Please select a specialty.'); // Placeholder - needs translation
+      setError('Veuillez sélectionner une spécialité.');
       return;
     }
     setIsLoading(true);
@@ -63,7 +57,7 @@ export function InsightsForm() {
       const output = await getSpecialistInsights({ patientInfo, specialty });
       setResult(output);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'An unknown error occurred.'); // Placeholder - needs translation
+      setError(e instanceof Error ? e.message : 'Une erreur inconnue est survenue.');
     } finally {
       setIsLoading(false);
     }
@@ -76,23 +70,23 @@ export function InsightsForm() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
          <Lightbulb className="h-6 w-6 text-primary" />
-          Request Specialist Insights 
+          Demander un Avis Spécialisé
         </CardTitle>
         <CardDescription>
-          Provide comprehensive patient information and select a specialty for AI-driven analysis. 
+          Fournissez des informations patient complètes et sélectionnez une spécialité pour une analyse par l'IA.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="patientInfo" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" /> Patient Information 
+              <FileText className="h-4 w-4" /> Informations du Patient
             </Label>
             <Textarea
               id="patientInfo"
               value={patientInfo}
               onChange={(e) => setPatientInfo(e.target.value)}
-              placeholder="Include symptoms, medical history, test results, etc." 
+              placeholder="Inclure symptômes, antécédents médicaux, résultats de tests, etc."
               required
               rows={8}
               className="text-base"
@@ -100,11 +94,11 @@ export function InsightsForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="specialty" className="flex items-center gap-2">
-              <Users className="h-4 w-4" /> Medical Specialty 
+              <Users className="h-4 w-4" /> Spécialité Médicale
             </Label>
             <Select value={specialty} onValueChange={setSpecialty} required>
               <SelectTrigger id="specialty" className="text-base">
-                <SelectValue placeholder="Select a specialty" /> 
+                <SelectValue placeholder="Sélectionnez une spécialité" /> 
               </SelectTrigger>
               <SelectContent>
                 {specialties.map((spec) => (
@@ -124,15 +118,15 @@ export function InsightsForm() {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing... 
+                Analyse en cours...
               </>
             ) : (
-              'Get Insights' 
+              'Obtenir l\'Avis'
             )}
           </Button>
           {error && (
             <Alert variant="destructive" className="w-full">
-              <AlertTitle>Error</AlertTitle> 
+              <AlertTitle>Erreur</AlertTitle> 
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -141,11 +135,11 @@ export function InsightsForm() {
 
       {result && (
         <div className="p-6 border-t">
-           <h3 className="font-headline text-2xl font-semibold mb-4 text-primary">{selectedSpecialtyLabel} Insights</h3>
+           <h3 className="font-headline text-2xl font-semibold mb-4 text-primary">Avis de {selectedSpecialtyLabel}</h3>
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Detailed Analysis</CardTitle> 
+                <CardTitle>Analyse Détaillée</CardTitle> 
               </CardHeader>
               <CardContent>
                 <p className="whitespace-pre-wrap">{result.insights}</p>
@@ -153,7 +147,7 @@ export function InsightsForm() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Recommendations & Next Steps</CardTitle> 
+                <CardTitle>Recommandations et Prochaines Étapes</CardTitle> 
               </CardHeader>
               <CardContent>
                 <p className="whitespace-pre-wrap">{result.recommendations}</p>

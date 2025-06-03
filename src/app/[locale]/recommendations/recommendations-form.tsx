@@ -11,11 +11,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon } from 'lucide-react';
 import { getContextualRecommendations, type ContextualRecommendationsOutput, type ContextualRecommendationsInput } from '@/ai/flows/ai-contextual-recommendation-notifications';
-// To translate this form, import and use useTranslations from 'next-intl'
-// Example:
-// import { useTranslations } from 'next-intl';
-// const t = useTranslations('RecommendationsForm');
-// Then use t('someKey') for labels, placeholders, button text etc.
 
 export function RecommendationsForm() {
   const [symptoms, setSymptoms] = useState('');
@@ -29,7 +24,6 @@ export function RecommendationsForm() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ContextualRecommendationsOutput | null>(null);
 
-  // Placeholder for translations - replace with actual useTranslations if i18n is re-enabled
   const t = (key: string, defaultText?: string) => {
     const translations: Record<string, string> = {
       formTitle: "Obtenir des Recommandations Personnalisées",
@@ -44,7 +38,6 @@ export function RecommendationsForm() {
       sexPlaceholder: "Sélectionnez le sexe",
       male: "Masculin",
       female: "Féminin",
-      // "Autre" retiré
       activityLabel: "Niveau d'Activité Actuel (Optionnel)",
       activityPlaceholder: "Sélectionnez le niveau d'activité",
       sedentary: "Sédentaire (ex: moins de 30 min/jour d'activité modérée)",
@@ -81,7 +74,6 @@ export function RecommendationsForm() {
       sex: sex || undefined,
       currentActivityLevel: currentActivityLevel || undefined,
       recentSleepQuality: recentSleepQuality || undefined,
-      // Location and timeOfDay are no longer collected from this form
     };
 
     try {
