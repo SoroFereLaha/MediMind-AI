@@ -1,3 +1,4 @@
+
 import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck } from 'lucide-react';
@@ -39,6 +40,19 @@ export default function PrivacyPage() {
           <p>
             We believe you should have control over your information. You may request access to, correction of, or deletion of your personal data, subject to applicable legal requirements. 
           </p>
+
+          <h3 className="font-semibold text-lg text-primary">Automatic Contextual Data and Consent</h3>
+          <p>
+            To further enrich your recommendations and make them more relevant to your current situation, MediMind AI may, with your explicit consent, access certain contextual data. This may include:
+          </p>
+          <ul className="list-disc list-inside space-y-1 pl-4">
+            <li><strong>Your approximate or precise location:</strong> To provide you with advice tailored to local weather, health alerts in your area, or to suggest nearby activities.</li>
+            <li><strong>The time of day:</strong> To adapt advice to routines (morning, evening) or specific time-related needs.</li>
+          </ul>
+          <p>
+            Access to this data will never occur without your clear, prior permission. You will remain in control of the information you share. This contextual data is used solely for the purpose of enhancing the personalization of health and wellness advice provided to you.
+          </p>
+
           <h3 className="font-semibold text-lg text-primary">Updates to This Policy</h3> 
           <p>
             We may update this privacy policy from time to time. We will notify you of any significant changes by posting the new policy on this page. 

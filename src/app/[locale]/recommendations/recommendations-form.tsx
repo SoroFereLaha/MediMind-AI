@@ -58,9 +58,7 @@ export function RecommendationsForm() {
       poor: "Poor",
       average: "Average",
       good: "Good",
-      locationLabel: "Location (Optional)",
       locationPlaceholder: "e.g., Paris, France",
-      timeOfDayLabel: "Time of Day (Optional)",
       timeOfDayPlaceholder: "Select time of day",
       morning: "Morning",
       afternoon: "Afternoon",
@@ -71,7 +69,9 @@ export function RecommendationsForm() {
       errorTitle: "Error",
       resultsTitle: "AI Recommendations",
       resultsCardTitle: "Proactive Health Advice",
-      unknownError: "An unknown error occurred."
+      unknownError: "An unknown error occurred.",
+      locationLabelWithConsentHint: "Location (Optional, can be auto-detected with your permission)",
+      timeOfDayLabelWithConsentHint: "Time of Day (Optional, can be auto-detected with your permission)"
     };
     return translations[key] || defaultText || key;
   };
@@ -211,7 +211,7 @@ export function RecommendationsForm() {
           
           <div className="space-y-2">
             <Label htmlFor="location" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" /> {t('locationLabel')}
+              <MapPin className="h-4 w-4" /> {t('locationLabelWithConsentHint')}
             </Label>
             <Input
               id="location"
@@ -225,7 +225,7 @@ export function RecommendationsForm() {
 
           <div className="space-y-2">
             <Label htmlFor="timeOfDay" className="flex items-center gap-2">
-              <Clock className="h-4 w-4" /> {t('timeOfDayLabel')}
+              <Clock className="h-4 w-4" /> {t('timeOfDayLabelWithConsentHint')}
             </Label>
             <Select value={timeOfDay} onValueChange={setTimeOfDay}>
               <SelectTrigger id="timeOfDay" className="text-base">

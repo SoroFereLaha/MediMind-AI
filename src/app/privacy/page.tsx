@@ -35,6 +35,19 @@ export default function PrivacyPage() {
           <p>
             Nous croyons que vous devriez avoir le contrôle sur vos informations. Vous pouvez demander l'accès, la correction ou la suppression de vos données personnelles, sous réserve des exigences légales applicables.
           </p>
+
+          <h3 className="font-semibold text-lg text-primary">Données Contextuelles Automatiques et Consentement</h3>
+          <p>
+            Pour enrichir davantage vos recommandations et les rendre plus pertinentes à votre situation actuelle, MediMind IA pourra, avec votre consentement explicite, accéder à certaines données contextuelles. Celles-ci peuvent inclure :
+          </p>
+          <ul className="list-disc list-inside space-y-1 pl-4">
+            <li><strong>Votre localisation approximative ou précise :</strong> Pour vous fournir des conseils adaptés à la météo locale, aux alertes sanitaires de votre région, ou pour suggérer des activités à proximité.</li>
+            <li><strong>Le moment de la journée :</strong> Pour adapter les conseils à des routines (matin, soir) ou à des besoins spécifiques liés à l'heure.</li>
+          </ul>
+          <p>
+            L'accès à ces données ne se fera jamais sans votre permission claire et préalable. Vous garderez le contrôle sur les informations que vous partagez. Ces données contextuelles sont utilisées uniquement dans le but d'améliorer la personnalisation des conseils de santé et de bien-être qui vous sont fournis.
+          </p>
+
           <h3 className="font-semibold text-lg text-primary">Mises à Jour de cette Politique</h3>
           <p>
             Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons de tout changement important en publiant la nouvelle politique sur cette page.

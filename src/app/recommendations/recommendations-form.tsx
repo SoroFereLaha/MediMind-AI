@@ -160,7 +160,7 @@ export function RecommendationsForm() {
           
           <div className="space-y-2">
             <Label htmlFor="location" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" /> Localisation (Optionnel)
+              <MapPin className="h-4 w-4" /> Localisation (Optionnel <span className="text-xs text-muted-foreground">peut être détectée avec permission</span>)
             </Label>
             <Input
               id="location"
@@ -174,7 +174,7 @@ export function RecommendationsForm() {
 
           <div className="space-y-2">
             <Label htmlFor="timeOfDay" className="flex items-center gap-2">
-              <Clock className="h-4 w-4" /> Moment de la journée (Optionnel)
+              <Clock className="h-4 w-4" /> Moment de la journée (Optionnel <span className="text-xs text-muted-foreground">peut être détecté avec permission</span>)
             </Label>
             <Select value={timeOfDay} onValueChange={setTimeOfDay}>
               <SelectTrigger id="timeOfDay" className="text-base">
