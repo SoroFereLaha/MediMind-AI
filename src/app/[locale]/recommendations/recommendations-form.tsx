@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon, MapPin, Clock } from 'lucide-react';
+import { Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon } from 'lucide-react';
 import { getContextualRecommendations, type ContextualRecommendationsOutput, type ContextualRecommendationsInput } from '@/ai/flows/ai-contextual-recommendation-notifications';
 // To translate this form, import and use useTranslations from 'next-intl'
 // Example:
@@ -24,8 +24,6 @@ export function RecommendationsForm() {
   const [sex, setSex] = useState('');
   const [currentActivityLevel, setCurrentActivityLevel] = useState('');
   const [recentSleepQuality, setRecentSleepQuality] = useState('');
-  const [location, setLocation] = useState('');
-  const [timeOfDay, setTimeOfDay] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +33,7 @@ export function RecommendationsForm() {
   const t = (key: string, defaultText?: string) => {
     const translations: Record<string, string> = {
       formTitle: "Get Personalized Recommendations",
-      formDescription: "Share your current symptoms, medical history, and context for tailored advice.",
+      formDescription: "Share your current symptoms, medical history, and context for tailored advice. Contextual data like location or exact time will be used if available through other means or future permissions.",
       symptomsLabel: "Current Symptoms (Required)",
       symptomsPlaceholder: "Describe your symptoms in detail...",
       historyLabel: "Medical History (Required)",
@@ -58,20 +56,12 @@ export function RecommendationsForm() {
       poor: "Poor",
       average: "Average",
       good: "Good",
-      locationPlaceholder: "e.g., Paris, France",
-      timeOfDayPlaceholder: "Select time of day",
-      morning: "Morning",
-      afternoon: "Afternoon",
-      evening: "Evening",
-      night: "Night",
       submitButton: "Get Recommendations",
       loadingButton: "Generating...",
       errorTitle: "Error",
       resultsTitle: "AI Recommendations",
       resultsCardTitle: "Proactive Health Advice",
-      unknownError: "An unknown error occurred.",
-      locationLabelWithConsentHint: "Location (Optional, can be auto-detected with your permission)",
-      timeOfDayLabelWithConsentHint: "Time of Day (Optional, can be auto-detected with your permission)"
+      unknownError: "An unknown error occurred."
     };
     return translations[key] || defaultText || key;
   };
@@ -90,8 +80,7 @@ export function RecommendationsForm() {
       sex: sex || undefined,
       currentActivityLevel: currentActivityLevel || undefined,
       recentSleepQuality: recentSleepQuality || undefined,
-      location: location || undefined,
-      timeOfDay: timeOfDay || undefined,
+      // Location and timeOfDay are no longer collected from this form
     };
 
     try {
@@ -117,7 +106,7 @@ export function RecommendationsForm() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label htmlFor="symptoms" className="flex items-center gap-2">
               <Activity className="h-4 w-4" /> {t('symptomsLabel')}
             </Label>
@@ -131,7 +120,7 @@ export function RecommendationsForm() {
               className="text-base"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label htmlFor="medicalHistory" className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4" /> {t('historyLabel')}
             </Label>
@@ -208,38 +197,6 @@ export function RecommendationsForm() {
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="location" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" /> {t('locationLabelWithConsentHint')}
-            </Label>
-            <Input
-              id="location"
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder={t('locationPlaceholder')}
-              className="text-base"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="timeOfDay" className="flex items-center gap-2">
-              <Clock className="h-4 w-4" /> {t('timeOfDayLabelWithConsentHint')}
-            </Label>
-            <Select value={timeOfDay} onValueChange={setTimeOfDay}>
-              <SelectTrigger id="timeOfDay" className="text-base">
-                <SelectValue placeholder={t('timeOfDayPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Morning">{t('morning')}</SelectItem>
-                <SelectItem value="Afternoon">{t('afternoon')}</SelectItem>
-                <SelectItem value="Evening">{t('evening')}</SelectItem>
-                <SelectItem value="Night">{t('night')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4 pt-6">
           <Button type="submit" disabled={isLoading} size="lg" className="shadow-md">

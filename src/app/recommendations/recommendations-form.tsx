@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon, MapPin, Clock } from 'lucide-react';
+import { Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon } from 'lucide-react';
 import { getContextualRecommendations, type ContextualRecommendationsOutput, type ContextualRecommendationsInput } from '@/ai/flows/ai-contextual-recommendation-notifications';
 
 export function RecommendationsForm() {
@@ -19,9 +19,7 @@ export function RecommendationsForm() {
   const [sex, setSex] = useState('');
   const [currentActivityLevel, setCurrentActivityLevel] = useState('');
   const [recentSleepQuality, setRecentSleepQuality] = useState('');
-  const [location, setLocation] = useState('');
-  const [timeOfDay, setTimeOfDay] = useState('');
-
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ContextualRecommendationsOutput | null>(null);
@@ -39,8 +37,7 @@ export function RecommendationsForm() {
       sex: sex || undefined,
       currentActivityLevel: currentActivityLevel || undefined,
       recentSleepQuality: recentSleepQuality || undefined,
-      location: location || undefined,
-      timeOfDay: timeOfDay || undefined,
+      // Location and timeOfDay are no longer collected from this form
     };
 
     try {
@@ -61,12 +58,12 @@ export function RecommendationsForm() {
           Obtenir des Recommandations Personnalisées
         </CardTitle>
         <CardDescription>
-          Partagez vos symptômes, antécédents et contexte pour des conseils sur mesure.
+          Partagez vos symptômes, antécédents et contexte pour des conseils sur mesure. Les données contextuelles comme la localisation ou l'heure exacte seront utilisées si disponibles via d'autres moyens ou permissions futures.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label htmlFor="symptoms" className="flex items-center gap-2">
               <Activity className="h-4 w-4" /> Symptômes Actuels (Obligatoire)
             </Label>
@@ -80,7 +77,7 @@ export function RecommendationsForm() {
               className="text-base"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 md:col-span-2">
             <Label htmlFor="medicalHistory" className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4" /> Antécédents Médicaux (Obligatoire)
             </Label>
@@ -157,38 +154,6 @@ export function RecommendationsForm() {
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="location" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" /> Localisation (Optionnel <span className="text-xs text-muted-foreground">peut être détectée avec permission</span>)
-            </Label>
-            <Input
-              id="location"
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="ex: Paris, France"
-              className="text-base"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="timeOfDay" className="flex items-center gap-2">
-              <Clock className="h-4 w-4" /> Moment de la journée (Optionnel <span className="text-xs text-muted-foreground">peut être détecté avec permission</span>)
-            </Label>
-            <Select value={timeOfDay} onValueChange={setTimeOfDay}>
-              <SelectTrigger id="timeOfDay" className="text-base">
-                <SelectValue placeholder="Sélectionnez le moment" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Morning">Matin</SelectItem>
-                <SelectItem value="Afternoon">Après-midi</SelectItem>
-                <SelectItem value="Evening">Soir</SelectItem>
-                <SelectItem value="Night">Nuit</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4 pt-6">
           <Button type="submit" disabled={isLoading} size="lg" className="shadow-md">
