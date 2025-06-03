@@ -18,10 +18,10 @@ import { getContextualRecommendations, type ContextualRecommendationsOutput, typ
 export function RecommendationsForm() {
   const [symptoms, setSymptoms] = useState('');
   const [medicalHistory, setMedicalHistory] = useState('');
+
+  // Optional fields moved under toggle
   const [age, setAge] = useState<string>('');
   const [sex, setSex] = useState('');
-
-  // Optional fields
   const [currentActivityLevel, setCurrentActivityLevel] = useState('');
   const [recentSleepQuality, setRecentSleepQuality] = useState('');
   const [medications, setMedications] = useState('');
@@ -38,7 +38,7 @@ export function RecommendationsForm() {
   const t = (key: string, defaultText?: string) => {
     const translations: Record<string, string> = {
       formTitle: "Obtenir des Recommandations Personnalisées",
-      formDescription: "Partagez vos symptômes actuels, vos antécédents médicaux et votre contexte pour des conseils sur mesure.",
+      formDescription: "Partagez vos symptômes actuels et vos antécédents médicaux. Ajoutez plus de détails pour des conseils encore plus sur mesure.",
       symptomsLabel: "Symptômes Actuels (Obligatoire)",
       symptomsPlaceholder: "Décrivez vos symptômes en détail...",
       historyLabel: "Antécédents Médicaux (Obligatoire)",
@@ -95,11 +95,11 @@ export function RecommendationsForm() {
     const inputData: ContextualRecommendationsInput = {
       symptoms,
       medicalHistory,
-      age: age ? parseInt(age, 10) : undefined,
-      sex: sex || undefined,
     };
 
     if (showOptionalFields) {
+      inputData.age = age ? parseInt(age, 10) : undefined;
+      inputData.sex = sex || undefined;
       inputData.currentActivityLevel = currentActivityLevel || undefined;
       inputData.recentSleepQuality = recentSleepQuality || undefined;
       inputData.medications = medications || undefined;
@@ -161,36 +161,6 @@ export function RecommendationsForm() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="age" className="flex items-center gap-2">
-              <User className="h-4 w-4" /> {t('ageLabel')}
-            </Label>
-            <Input
-              id="age"
-              type="number"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder={t('agePlaceholder')}
-              className="text-base"
-              min="0"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="sex" className="flex items-center gap-2">
-              <Users className="h-4 w-4" /> {t('sexLabel')}
-            </Label>
-            <Select value={sex} onValueChange={setSex}>
-              <SelectTrigger id="sex" className="text-base">
-                <SelectValue placeholder={t('sexPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Male">{t('male')}</SelectItem>
-                <SelectItem value="Female">{t('female')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="md:col-span-2 mt-4">
             <Button 
               type="button" 
@@ -205,6 +175,36 @@ export function RecommendationsForm() {
 
           {showOptionalFields && (
             <>
+              <div className="space-y-2">
+                <Label htmlFor="age" className="flex items-center gap-2">
+                  <User className="h-4 w-4" /> {t('ageLabel')}
+                </Label>
+                <Input
+                  id="age"
+                  type="number"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  placeholder={t('agePlaceholder')}
+                  className="text-base"
+                  min="0"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="sex" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" /> {t('sexLabel')}
+                </Label>
+                <Select value={sex} onValueChange={setSex}>
+                  <SelectTrigger id="sex" className="text-base">
+                    <SelectValue placeholder={t('sexPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Male">{t('male')}</SelectItem>
+                    <SelectItem value="Female">{t('female')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="medications" className="flex items-center gap-2">
                   <Pill className="h-4 w-4" /> {t('medicationsLabel')}
@@ -352,3 +352,5 @@ export function RecommendationsForm() {
     </Card>
   );
 }
+
+    
