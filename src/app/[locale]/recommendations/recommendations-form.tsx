@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon } from 'lucide-react';
+import { Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon, ChevronDown, ChevronUp } from 'lucide-react';
 import { getContextualRecommendations, type ContextualRecommendationsOutput, type ContextualRecommendationsInput } from '@/ai/flows/ai-contextual-recommendation-notifications';
 
 export function RecommendationsForm() {
@@ -23,6 +23,7 @@ export function RecommendationsForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ContextualRecommendationsOutput | null>(null);
+  const [showOptionalFields, setShowOptionalFields] = useState(false);
 
   const t = (key: string, defaultText?: string) => {
     const translations: Record<string, string> = {
@@ -38,6 +39,8 @@ export function RecommendationsForm() {
       sexPlaceholder: "Sélectionnez le sexe",
       male: "Masculin",
       female: "Féminin",
+      showMoreDetailsButton: "Afficher plus de détails optionnels",
+      hideMoreDetailsButton: "Masquer les détails optionnels",
       activityLabel: "Niveau d'Activité Actuel (Optionnel)",
       activityPlaceholder: "Sélectionnez le niveau d'activité",
       sedentary: "Sédentaire (ex: moins de 30 min/jour d'activité modérée)",
@@ -72,8 +75,8 @@ export function RecommendationsForm() {
       medicalHistory,
       age: age ? parseInt(age, 10) : undefined,
       sex: sex || undefined,
-      currentActivityLevel: currentActivityLevel || undefined,
-      recentSleepQuality: recentSleepQuality || undefined,
+      currentActivityLevel: showOptionalFields && currentActivityLevel ? currentActivityLevel : undefined,
+      recentSleepQuality: showOptionalFields && recentSleepQuality ? recentSleepQuality : undefined,
     };
 
     try {
@@ -157,39 +160,55 @@ export function RecommendationsForm() {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="currentActivityLevel" className="flex items-center gap-2">
-              <Activity className="h-4 w-4" /> {t('activityLabel')}
-            </Label>
-            <Select value={currentActivityLevel} onValueChange={setCurrentActivityLevel}>
-              <SelectTrigger id="currentActivityLevel" className="text-base">
-                <SelectValue placeholder={t('activityPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Sedentary">{t('sedentary')}</SelectItem>
-                <SelectItem value="Light">{t('light')}</SelectItem>
-                <SelectItem value="Moderate">{t('moderate')}</SelectItem>
-                <SelectItem value="Active">{t('active')}</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="md:col-span-2 mt-4">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setShowOptionalFields(!showOptionalFields)}
+              className="w-full sm:w-auto"
+            >
+              {showOptionalFields ? t('hideMoreDetailsButton') : t('showMoreDetailsButton')}
+              {showOptionalFields ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
+            </Button>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="recentSleepQuality" className="flex items-center gap-2">
-              <Moon className="h-4 w-4" /> {t('sleepLabel')}
-            </Label>
-            <p className="text-xs text-muted-foreground">{t('sleepDescription')}</p>
-            <Select value={recentSleepQuality} onValueChange={setRecentSleepQuality}>
-              <SelectTrigger id="recentSleepQuality" className="text-base">
-                <SelectValue placeholder={t('sleepPlaceholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Poor">{t('poor')}</SelectItem>
-                <SelectItem value="Average">{t('average')}</SelectItem>
-                <SelectItem value="Good">{t('good')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {showOptionalFields && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="currentActivityLevel" className="flex items-center gap-2">
+                  <Activity className="h-4 w-4" /> {t('activityLabel')}
+                </Label>
+                <Select value={currentActivityLevel} onValueChange={setCurrentActivityLevel}>
+                  <SelectTrigger id="currentActivityLevel" className="text-base">
+                    <SelectValue placeholder={t('activityPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Sedentary">{t('sedentary')}</SelectItem>
+                    <SelectItem value="Light">{t('light')}</SelectItem>
+                    <SelectItem value="Moderate">{t('moderate')}</SelectItem>
+                    <SelectItem value="Active">{t('active')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="recentSleepQuality" className="flex items-center gap-2">
+                  <Moon className="h-4 w-4" /> {t('sleepLabel')}
+                </Label>
+                <p className="text-xs text-muted-foreground">{t('sleepDescription')}</p>
+                <Select value={recentSleepQuality} onValueChange={setRecentSleepQuality}>
+                  <SelectTrigger id="recentSleepQuality" className="text-base">
+                    <SelectValue placeholder={t('sleepPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Poor">{t('poor')}</SelectItem>
+                    <SelectItem value="Average">{t('average')}</SelectItem>
+                    <SelectItem value="Good">{t('good')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          )}
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4 pt-6">
           <Button type="submit" disabled={isLoading} size="lg" className="shadow-md">
@@ -227,3 +246,4 @@ export function RecommendationsForm() {
     </Card>
   );
 }
+
