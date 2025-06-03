@@ -32,36 +32,37 @@ export function RecommendationsForm() {
   // Placeholder for translations - replace with actual useTranslations if i18n is re-enabled
   const t = (key: string, defaultText?: string) => {
     const translations: Record<string, string> = {
-      formTitle: "Get Personalized Recommendations",
-      formDescription: "Share your current symptoms, medical history, and context for tailored advice. Contextual data like location or exact time will be used if available through other means or future permissions.",
-      symptomsLabel: "Current Symptoms (Required)",
-      symptomsPlaceholder: "Describe your symptoms in detail...",
-      historyLabel: "Medical History (Required)",
-      historyPlaceholder: "Relevant past illnesses, chronic conditions, allergies, medications...",
-      ageLabel: "Age (Optional)",
-      agePlaceholder: "e.g., 30",
-      sexLabel: "Sex (Optional)",
-      sexPlaceholder: "Select sex",
-      male: "Male",
-      female: "Female",
-      other: "Other",
-      activityLabel: "Current Activity Level (Optional)",
-      activityPlaceholder: "Activity level",
-      sedentary: "Sedentary",
-      light: "Light",
-      moderate: "Moderate",
-      active: "Active",
-      sleepLabel: "Recent Sleep Quality (Optional)",
-      sleepPlaceholder: "Sleep quality",
-      poor: "Poor",
-      average: "Average",
-      good: "Good",
-      submitButton: "Get Recommendations",
-      loadingButton: "Generating...",
-      errorTitle: "Error",
-      resultsTitle: "AI Recommendations",
-      resultsCardTitle: "Proactive Health Advice",
-      unknownError: "An unknown error occurred."
+      formTitle: "Obtenir des Recommandations Personnalisées",
+      formDescription: "Partagez vos symptômes actuels, vos antécédents médicaux et votre contexte pour des conseils sur mesure.",
+      symptomsLabel: "Symptômes Actuels (Obligatoire)",
+      symptomsPlaceholder: "Décrivez vos symptômes en détail...",
+      historyLabel: "Antécédents Médicaux (Obligatoire)",
+      historyPlaceholder: "Maladies passées pertinentes, conditions chroniques, allergies, médicaments...",
+      ageLabel: "Âge (Optionnel)",
+      agePlaceholder: "ex: 30",
+      sexLabel: "Sexe (Optionnel)",
+      sexPlaceholder: "Sélectionnez le sexe",
+      male: "Masculin",
+      female: "Féminin",
+      // "Autre" retiré
+      activityLabel: "Niveau d'Activité Actuel (Optionnel)",
+      activityPlaceholder: "Sélectionnez le niveau d'activité",
+      sedentary: "Sédentaire (ex: moins de 30 min/jour d'activité modérée)",
+      light: "Léger (ex: 30-60 min/jour d'activité modérée)",
+      moderate: "Modéré (ex: 60-90 min/jour d'activité modérée ou activité intense régulière)",
+      active: "Actif (ex: >90 min/jour d'activité modérée ou entraînement intense quotidien)",
+      sleepLabel: "Qualité du Sommeil Récent (Optionnel)",
+      sleepDescription: "La qualité de votre sommeil influence votre énergie, votre humeur et votre récupération. Comment l'évaluez-vous ?",
+      sleepPlaceholder: "Sélectionnez la qualité du sommeil",
+      poor: "Mauvaise",
+      average: "Moyenne",
+      good: "Bonne",
+      submitButton: "Obtenir des Recommandations",
+      loadingButton: "Génération en cours...",
+      errorTitle: "Erreur",
+      resultsTitle: "Recommandations de l'IA",
+      resultsCardTitle: "Conseils de Santé Proactifs",
+      unknownError: "Une erreur inconnue est survenue."
     };
     return translations[key] || defaultText || key;
   };
@@ -160,7 +161,6 @@ export function RecommendationsForm() {
               <SelectContent>
                 <SelectItem value="Male">{t('male')}</SelectItem>
                 <SelectItem value="Female">{t('female')}</SelectItem>
-                <SelectItem value="Other">{t('other')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -186,6 +186,7 @@ export function RecommendationsForm() {
             <Label htmlFor="recentSleepQuality" className="flex items-center gap-2">
               <Moon className="h-4 w-4" /> {t('sleepLabel')}
             </Label>
+            <p className="text-xs text-muted-foreground">{t('sleepDescription')}</p>
             <Select value={recentSleepQuality} onValueChange={setRecentSleepQuality}>
               <SelectTrigger id="recentSleepQuality" className="text-base">
                 <SelectValue placeholder={t('sleepPlaceholder')} />
