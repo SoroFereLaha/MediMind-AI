@@ -9,7 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon, ChevronDown, ChevronUp } from 'lucide-react';
+import { 
+  Loader2, FileHeart, Activity, ShieldAlert, User, Users, Moon, ChevronDown, ChevronUp,
+  Pill, Scale, Ruler, ListChecks, Gauge
+} from 'lucide-react';
 import { getContextualRecommendations, type ContextualRecommendationsOutput, type ContextualRecommendationsInput } from '@/ai/flows/ai-contextual-recommendation-notifications';
 
 export function RecommendationsForm() {
@@ -17,8 +20,15 @@ export function RecommendationsForm() {
   const [medicalHistory, setMedicalHistory] = useState('');
   const [age, setAge] = useState<string>('');
   const [sex, setSex] = useState('');
+
+  // Optional fields
   const [currentActivityLevel, setCurrentActivityLevel] = useState('');
   const [recentSleepQuality, setRecentSleepQuality] = useState('');
+  const [medications, setMedications] = useState('');
+  const [weightKg, setWeightKg] = useState<string>('');
+  const [heightCm, setHeightCm] = useState<string>('');
+  const [healthGoals, setHealthGoals] = useState('');
+  const [stressLevel, setStressLevel] = useState('');
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +42,7 @@ export function RecommendationsForm() {
       symptomsLabel: "Symptômes Actuels (Obligatoire)",
       symptomsPlaceholder: "Décrivez vos symptômes en détail...",
       historyLabel: "Antécédents Médicaux (Obligatoire)",
-      historyPlaceholder: "Maladies passées pertinentes, conditions chroniques, allergies, médicaments...",
+      historyPlaceholder: "Maladies passées pertinentes, conditions chroniques, allergies...",
       ageLabel: "Âge (Optionnel)",
       agePlaceholder: "ex: 30",
       sexLabel: "Sexe (Optionnel)",
@@ -41,6 +51,14 @@ export function RecommendationsForm() {
       female: "Féminin",
       showMoreDetailsButton: "Afficher plus de détails optionnels",
       hideMoreDetailsButton: "Masquer les détails optionnels",
+      medicationsLabel: "Médicaments Actuels (Optionnel)",
+      medicationsPlaceholder: "Listez vos médicaments, vitamines et suppléments...",
+      weightLabel: "Poids (kg) (Optionnel)",
+      weightPlaceholder: "ex: 70",
+      heightLabel: "Taille (cm) (Optionnel)",
+      heightPlaceholder: "ex: 175",
+      healthGoalsLabel: "Objectifs de Santé Principaux (Optionnel)",
+      healthGoalsPlaceholder: "Décrivez vos principaux objectifs de santé (ex: perdre du poids, gérer le stress)...",
       activityLabel: "Niveau d'Activité Actuel (Optionnel)",
       activityPlaceholder: "Sélectionnez le niveau d'activité",
       sedentary: "Sédentaire (ex: moins de 30 min/jour d'activité modérée)",
@@ -53,6 +71,11 @@ export function RecommendationsForm() {
       poor: "Mauvaise",
       average: "Moyenne",
       good: "Bonne",
+      stressLevelLabel: "Niveau de Stress Récent (Optionnel)",
+      stressLevelPlaceholder: "Sélectionnez votre niveau de stress",
+      stressLow: "Bas",
+      stressMedium: "Moyen",
+      stressHigh: "Élevé",
       submitButton: "Obtenir des Recommandations",
       loadingButton: "Génération en cours...",
       errorTitle: "Erreur",
@@ -62,7 +85,6 @@ export function RecommendationsForm() {
     };
     return translations[key] || defaultText || key;
   };
-
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -75,9 +97,17 @@ export function RecommendationsForm() {
       medicalHistory,
       age: age ? parseInt(age, 10) : undefined,
       sex: sex || undefined,
-      currentActivityLevel: showOptionalFields && currentActivityLevel ? currentActivityLevel : undefined,
-      recentSleepQuality: showOptionalFields && recentSleepQuality ? recentSleepQuality : undefined,
     };
+
+    if (showOptionalFields) {
+      inputData.currentActivityLevel = currentActivityLevel || undefined;
+      inputData.recentSleepQuality = recentSleepQuality || undefined;
+      inputData.medications = medications || undefined;
+      inputData.weightKg = weightKg ? parseFloat(weightKg) : undefined;
+      inputData.heightCm = heightCm ? parseInt(heightCm, 10) : undefined;
+      inputData.healthGoals = healthGoals || undefined;
+      inputData.stressLevel = stressLevel || undefined;
+    }
 
     try {
       const output = await getContextualRecommendations(inputData);
@@ -142,6 +172,7 @@ export function RecommendationsForm() {
               onChange={(e) => setAge(e.target.value)}
               placeholder={t('agePlaceholder')}
               className="text-base"
+              min="0"
             />
           </div>
 
@@ -174,6 +205,65 @@ export function RecommendationsForm() {
 
           {showOptionalFields && (
             <>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="medications" className="flex items-center gap-2">
+                  <Pill className="h-4 w-4" /> {t('medicationsLabel')}
+                </Label>
+                <Textarea
+                  id="medications"
+                  value={medications}
+                  onChange={(e) => setMedications(e.target.value)}
+                  placeholder={t('medicationsPlaceholder')}
+                  rows={2}
+                  className="text-base"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="weightKg" className="flex items-center gap-2">
+                  <Scale className="h-4 w-4" /> {t('weightLabel')}
+                </Label>
+                <Input
+                  id="weightKg"
+                  type="number"
+                  value={weightKg}
+                  onChange={(e) => setWeightKg(e.target.value)}
+                  placeholder={t('weightPlaceholder')}
+                  className="text-base"
+                  min="0"
+                  step="0.1"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="heightCm" className="flex items-center gap-2">
+                  <Ruler className="h-4 w-4" /> {t('heightLabel')}
+                </Label>
+                <Input
+                  id="heightCm"
+                  type="number"
+                  value={heightCm}
+                  onChange={(e) => setHeightCm(e.target.value)}
+                  placeholder={t('heightPlaceholder')}
+                  className="text-base"
+                  min="0"
+                />
+              </div>
+              
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="healthGoals" className="flex items-center gap-2">
+                  <ListChecks className="h-4 w-4" /> {t('healthGoalsLabel')}
+                </Label>
+                <Textarea
+                  id="healthGoals"
+                  value={healthGoals}
+                  onChange={(e) => setHealthGoals(e.target.value)}
+                  placeholder={t('healthGoalsPlaceholder')}
+                  rows={2}
+                  className="text-base"
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="currentActivityLevel" className="flex items-center gap-2">
                   <Activity className="h-4 w-4" /> {t('activityLabel')}
@@ -204,6 +294,22 @@ export function RecommendationsForm() {
                     <SelectItem value="Poor">{t('poor')}</SelectItem>
                     <SelectItem value="Average">{t('average')}</SelectItem>
                     <SelectItem value="Good">{t('good')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="stressLevel" className="flex items-center gap-2">
+                  <Gauge className="h-4 w-4" /> {t('stressLevelLabel')}
+                </Label>
+                <Select value={stressLevel} onValueChange={setStressLevel}>
+                  <SelectTrigger id="stressLevel" className="text-base">
+                    <SelectValue placeholder={t('stressLevelPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Low">{t('stressLow')}</SelectItem>
+                    <SelectItem value="Medium">{t('stressMedium')}</SelectItem>
+                    <SelectItem value="High">{t('stressHigh')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -246,4 +352,3 @@ export function RecommendationsForm() {
     </Card>
   );
 }
-
