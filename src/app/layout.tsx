@@ -11,6 +11,13 @@ export const metadata: Metadata = {
     default: 'MediMind IA',
   },
   description: 'Guidance médicale assistée par IA pour votre bien-être.',
+  icons: {
+    icon: '/favicon.ico', // Chemin vers votre favicon.ico dans le dossier public
+    // Vous pouvez aussi spécifier d'autres types/tailles :
+    // icon: '/icon.png', // Pour un favicon PNG
+    // apple: '/apple-icon.png', // Pour les appareils Apple
+    // shortcut: '/shortcut-icon.png'
+  },
 };
 
 interface RootLayoutProps {
