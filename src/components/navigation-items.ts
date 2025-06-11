@@ -1,6 +1,6 @@
 
 import type { LucideIcon } from 'lucide-react';
-import { Home, UserCheck, BrainCircuit, MessageSquareHeart, ShieldCheck } from 'lucide-react';
+import { Home, UserCheck, BrainCircuit, MessageSquareHeart, ShieldCheck, Pill } from 'lucide-react';
 
 export interface NavItem {
   label: string;
@@ -34,6 +34,12 @@ export const getNavigationItems = (): NavItem[] => [
     icon: MessageSquareHeart,
     match: 'startsWith',
   },
+  {
+    label: "Suggestions Médicaments (IA)",
+    href: '/medications',
+    icon: Pill,
+    match: 'startsWith',
+  }
 ];
 
 export const getFooterNavigationItems = (): NavItem[] => [
@@ -44,3 +50,4 @@ export const getFooterNavigationItems = (): NavItem[] => [
         match: 'exact',
     }
 ];
+    
