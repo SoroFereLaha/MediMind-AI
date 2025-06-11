@@ -33,12 +33,6 @@ export const getNavigationItems = (): NavItem[] => [
     href: '/recommendations',
     icon: MessageSquareHeart,
     match: 'startsWith',
-  },
-  {
-    label: "Suggestions Médicaments (IA)",
-    href: '/medications',
-    icon: Pill,
-    match: 'startsWith',
   }
 ];
 
