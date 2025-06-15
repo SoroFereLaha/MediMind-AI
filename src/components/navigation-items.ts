@@ -1,6 +1,6 @@
 
 import type { LucideIcon } from 'lucide-react';
-import { Home, UserCheck, BrainCircuit, MessageSquareHeart, ShieldCheck, Pill } from 'lucide-react';
+import { Home, UserCheck, BrainCircuit, MessageSquareHeart, ShieldCheck, Stethoscope } from 'lucide-react';
 
 export interface NavItem {
   label: string;
@@ -26,6 +26,12 @@ export const getNavigationItems = (): NavItem[] => [
     label: "Avis de Spécialistes",
     href: '/insights',
     icon: BrainCircuit,
+    match: 'startsWith',
+  },
+  {
+    label: "Trouver un Médecin",
+    href: '/find-doctor',
+    icon: Stethoscope,
     match: 'startsWith',
   },
   {
