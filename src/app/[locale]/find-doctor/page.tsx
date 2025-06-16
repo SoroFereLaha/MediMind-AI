@@ -11,7 +11,7 @@ export default function FindDoctorLocalePage() {
     <div className="space-y-8">
       <PageHeader
         title="Trouver un Médecin"
-        description="Décrivez vos symptômes et nous vous aiderons à identifier une spécialité pertinente et à trouver des médecins (simulation actuelle)."
+        description="Décrivez vos symptômes. Nous analyserons cela et simulerons une recherche de médecins à proximité (via API simulée)."
         icon={Stethoscope}
       />
       <FindDoctorForm />
