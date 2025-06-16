@@ -4,6 +4,7 @@ import './globals.css'; // Global styles
 import { AppLayout } from '@/components/layout/app-layout';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
+import { AppProvider } from '@/contexts/app-context'; // Import AppProvider
 
 export const metadata: Metadata = {
   title: {
@@ -12,11 +13,7 @@ export const metadata: Metadata = {
   },
   description: 'Guidance médicale assistée par IA pour votre bien-être.',
   icons: {
-    icon: '/favicon.ico', // Chemin vers votre favicon.ico dans le dossier public
-    // Vous pouvez aussi spécifier d'autres types/tailles :
-    // icon: '/icon.png', // Pour un favicon PNG
-    // apple: '/apple-icon.png', // Pour les appareils Apple
-    // shortcut: '/shortcut-icon.png'
+    icon: '/favicon.ico', 
   },
 };
 
@@ -27,7 +24,7 @@ interface RootLayoutProps {
 export default function RootLayout({
   children
 }: RootLayoutProps) {
-  const bodyFontClass = 'font-body'; // PT Sans par défaut
+  const bodyFontClass = 'font-body'; 
 
   return (
     <html lang="fr" dir="ltr" suppressHydrationWarning>
@@ -43,7 +40,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AppLayout>{children}</AppLayout>
+          <AppProvider> {/* Wrap AppLayout with AppProvider */}
+            <AppLayout>{children}</AppLayout>
+          </AppProvider>
           <Toaster />
         </ThemeProvider>
       </body>

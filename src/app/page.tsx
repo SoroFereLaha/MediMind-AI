@@ -1,12 +1,29 @@
 
+'use client'; // Make this a client component to use useAppContext for redirection
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import Link from "next/link";
-import { ArrowRight, Bot, Shield, BrainCircuit } from "lucide-react";
+import { ArrowRight, Bot, Shield, BrainCircuit, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAppContext } from '@/contexts/app-context';
+
 
 export default function HomePage() {
+  const { userRole } = useAppContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (userRole === 'medecin') {
+      router.replace('/medecin');
+    }
+    // If patient, this is their home page, so no redirect needed.
+    // If role is null, RoleSelector will be shown by AppLayout.
+  }, [userRole, router]);
+
   const welcomeTitle = "Bienvenue chez MediMind IA";
   const welcomeDescription = "Votre compagnon de santé intelligent, fournissant des informations et des conseils basés sur l'IA pour votre bien-être.";
   const startJourneyTitle = "Commencez Votre Parcours de Santé";
@@ -20,6 +37,11 @@ export default function HomePage() {
   const securePrivateTitle = "Sécurisé et Confidentiel";
   const securePrivateDescription = "Vos données sont traitées avec le plus grand soin, garantissant confidentialité et sécurité tout au long du processus.";
   const disclaimer = "MediMind IA est destiné à des fins d'information uniquement et ne constitue pas un avis médical. Consultez toujours un professionnel de la santé qualifié pour toute préoccupation de santé ou avant de prendre toute décision relative à votre santé ou à votre traitement.";
+
+  if (userRole === 'medecin') {
+    // This will ideally not be visible for long due to redirect
+    return <div className="flex justify-center items-center h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /> Redirection...</div>;
+  }
 
   return (
     <div className="space-y-8">
