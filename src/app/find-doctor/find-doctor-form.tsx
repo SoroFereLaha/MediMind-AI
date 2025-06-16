@@ -57,7 +57,7 @@ export function FindDoctorForm() {
           Recherche de Médecin Assistée par IA
         </CardTitle>
         <CardDescription>
-          Fournissez vos symptômes et quelques informations optionnelles pour obtenir une suggestion de spécialité et une liste de médecins (actuellement simulée).
+          Fournissez vos symptômes et des informations optionnelles pour obtenir une suggestion de spécialité et une liste de médecins provenant d'une source de données locale.
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
@@ -157,8 +157,8 @@ export function FindDoctorForm() {
             </CardContent>
           </Card>
 
-          <h4 className="font-headline text-xl font-semibold mb-3">Médecins correspondants (Simulation)</h4>
-          <Alert variant="default" className="mb-4">
+          <h4 className="font-headline text-xl font-semibold mb-3">Médecins correspondants</h4>
+          <Alert variant="default" className="mb-4"> {/* Changed variant from "info" to "default" if "info" isn't standard */}
             <BadgeInfo className="h-4 w-4" />
             <AlertDescription>{result.searchNote}</AlertDescription>
           </Alert>
@@ -181,11 +181,10 @@ export function FindDoctorForm() {
               ))}
             </div>
           ) : (
-            <p className="text-muted-foreground">Aucun médecin (simulé) n'a été trouvé pour la spécialité "{result.suggestedSpecialty}". Cela peut être dû à la nature des données de simulation.</p>
+            <p className="text-muted-foreground">Aucun médecin n'a été trouvé pour la spécialité "{result.suggestedSpecialty}" avec le code postal fourni dans notre source de données locale. Veuillez vérifier le fichier `src/data/doctors.csv` ou essayer d'élargir vos critères.</p>
           )}
         </div>
       )}
     </Card>
   );
 }
-

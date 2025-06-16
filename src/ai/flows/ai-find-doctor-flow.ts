@@ -2,7 +2,7 @@
 
 'use server';
 /**
- * @fileOverview Flow pour aider à trouver un médecin basé sur les symptômes.
+ * @fileOverview Flow pour aider à trouver un médecin basé sur les symptômes et un fichier CSV local.
  *
  * - findDoctorBySymptoms - Fonction principale pour obtenir des suggestions de spécialités et des médecins.
  * - FindDoctorBySymptomsInput - Type d'entrée.
@@ -11,6 +11,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import fs from 'fs';
+import path from 'path';
 
 const FindDoctorBySymptomsInputSchema = z.object({
   symptoms: z.string().describe('Les symptômes décrits par l"utilisateur.'),
@@ -27,8 +29,9 @@ const DoctorSchema = z.object({
   specialty: z.string().describe('Spécialité du médecin.'),
   address: z.string().describe('Adresse du cabinet du médecin.'),
   phone: z.string().optional().describe('Numéro de téléphone du cabinet.'),
-  // Pourrait être étendu avec d'autres infos : horaires, assurances acceptées, etc.
+  // postal_code n'est pas inclus dans le schéma de sortie affiché à l'utilisateur, mais utilisé pour le filtrage
 });
+export type Doctor = z.infer<typeof DoctorSchema>;
 
 const FindDoctorBySymptomsOutputSchema = z.object({
   suggestedSpecialty: z
@@ -40,9 +43,9 @@ const FindDoctorBySymptomsOutputSchema = z.object({
   doctors: z
     .array(DoctorSchema)
     .describe(
-      'Liste de médecins simulés correspondant à la spécialité suggérée. Sera remplacé par une vraie recherche plus tard.'
+      'Liste de médecins trouvés dans la source de données locale correspondant à la spécialité suggérée et au code postal fourni.'
     ),
-  searchNote: z.string().describe('Note expliquant que les médecins listés sont des exemples simulés pour l"instant.')
+  searchNote: z.string().describe('Note expliquant l"origine des données des médecins et les limites éventuelles de la recherche.')
 });
 export type FindDoctorBySymptomsOutput = z.infer<
   typeof FindDoctorBySymptomsOutputSchema
@@ -54,41 +57,61 @@ export async function findDoctorBySymptoms(
   return findDoctorFlow(input);
 }
 
-// TODO: Remplacer ceci par une vraie recherche de médecins, potentiellement via un Tool Genkit lisant un CSV ou une base de données.
-function getSimulatedDoctors(specialty: string, postalCode?: string): z.infer<typeof DoctorSchema>[] {
-  const allDoctors = [
-    { name: 'Dr. Jeanne Martin', specialty: 'Médecine Générale', address: '12 Rue de la Paix, 75002 Paris', phone: '01 23 45 67 89' },
-    { name: 'Dr. Paul Durand', specialty: 'Cardiologie', address: '45 Avenue des Champs, 75008 Paris', phone: '01 98 76 54 32' },
-    { name: 'Dr. Sophie Bernard', specialty: 'Dermatologie', address: '3 Boulevard Saint-Germain, 75005 Paris', phone: '01 12 23 34 45' },
-    { name: 'Dr. Luc Moreau', specialty: 'Pédiatrie', address: '7 Rue de Rivoli, 75001 Paris', phone: '01 56 67 78 89' },
-    { name: 'Dr. Émilie Petit', specialty: 'Médecine Générale', address: '101 Rue Oberkampf, 75011 Paris', phone: '01 34 45 56 67' },
-    { name: 'Dr. Antoine Dubois', specialty: 'Cardiologie', address: '22 Place Vendôme, 75001 Paris', phone: '01 78 89 90 01' },
-    { name: 'Dr. Marie Leclerc', specialty: 'Gastro-entérologie', address: '55 Quai de Valmy, 75010 Paris', phone: '01 21 32 43 54' },
-  ];
+const getDoctorsFromCSVTool = ai.defineTool(
+  {
+    name: 'getDoctorsFromCSV',
+    description: 'Récupère une liste de médecins depuis un fichier CSV local, filtrée par spécialité et code postal.',
+    inputSchema: z.object({
+      specialty: z.string().describe('Spécialité médicale à rechercher.'),
+      postalCode: z.string().optional().describe('Code postal pour affiner la recherche.'),
+    }),
+    outputSchema: z.array(DoctorSchema),
+  },
+  async ({ specialty, postalCode }) => {
+    const doctorsFilePath = path.join(process.cwd(), 'src', 'data', 'doctors.csv');
+    const defaultDoctors: Doctor[] = [ // Utilisé en cas d'erreur de lecture du CSV ou si aucun médecin n'est trouvé.
+        { name: 'Dr. Jeanne Martin (Fallback)', specialty: 'Médecine Générale', address: '12 Rue de la Paix, 75002 Paris', phone: '01 23 45 67 89' },
+        { name: 'Dr. Paul Durand (Fallback)', specialty: 'Cardiologie', address: '45 Avenue des Champs, 75008 Paris', phone: '01 98 76 54 32' },
+    ];
 
-  let filteredDoctors = allDoctors.filter(doc => 
-    doc.specialty.toLowerCase().includes(specialty.toLowerCase())
-  );
+    try {
+      if (!fs.existsSync(doctorsFilePath)) {
+        console.warn(`Fichier doctors.csv non trouvé à l'emplacement: ${doctorsFilePath}. Utilisation des données de secours.`);
+        return defaultDoctors.filter(doc => doc.specialty.toLowerCase().includes(specialty.toLowerCase()));
+      }
 
-  // Simulation très basique de filtrage par code postal si fourni
-  if (postalCode && filteredDoctors.length > 0) {
-     // Pour la démo, on s'assure qu'au moins un médecin correspond si un code postal est donné
-     // et que la spécialité correspond.
-     // Dans une vraie appli, ce serait un vrai filtre.
-     if (!filteredDoctors.find(doc => doc.address.includes(postalCode))) {
-        // Si aucun ne correspond au CP exact, on en prend un au hasard de la bonne spécialité
-        // et on fait comme si son CP correspondait pour la démo.
-        const randomDocInSpecialty = filteredDoctors[Math.floor(Math.random() * filteredDoctors.length)];
-        // On pourrait modifier l'adresse pour inclure le CP pour la démo, mais on va juste les retourner
-     }
-     // Pour l'instant, ne filtre pas réellement par code postal pour les données simulées
-     // pour toujours avoir des résultats si la spécialité correspond.
+      const fileContent = fs.readFileSync(doctorsFilePath, 'utf-8');
+      const rows = fileContent.split('\n').slice(1); // Ignorer l'en-tête
+      const doctors: Doctor[] = [];
+
+      for (const row of rows) {
+        const columns = row.split(',');
+        if (columns.length >= 5) { // S'assurer qu'on a au moins les colonnes attendues
+          const doctorPostalCode = columns[4]?.trim();
+          const doctorSpecialty = columns[1]?.trim();
+
+          const specialtyMatch = doctorSpecialty.toLowerCase().includes(specialty.toLowerCase());
+          const postalCodeMatch = !postalCode || (doctorPostalCode && doctorPostalCode === postalCode);
+          
+          if (specialtyMatch && postalCodeMatch) {
+            doctors.push({
+              name: columns[0]?.trim() || 'N/A',
+              specialty: doctorSpecialty || 'N/A',
+              address: columns[2]?.trim() || 'N/A',
+              phone: columns[3]?.trim() || undefined,
+            });
+          }
+        }
+      }
+      return doctors.length > 0 ? doctors.slice(0, 5) : []; // Limiter à 5 résultats pour la démo
+    } catch (error) {
+      console.error('Erreur lors de la lecture ou du parsing du fichier CSV des médecins:', error);
+      // Retourner une liste filtrée de médecins par défaut en cas d'erreur majeure
+       return defaultDoctors.filter(doc => doc.specialty.toLowerCase().includes(specialty.toLowerCase()));
+    }
   }
+);
 
-
-  return filteredDoctors.length > 0 ? filteredDoctors.slice(0, 3) : 
-         allDoctors.filter(doc => doc.specialty === 'Médecine Générale').slice(0,2); // Fallback si la spécialité n'est pas trouvée
-}
 
 const prompt = ai.definePrompt({
   name: 'findDoctorPrompt',
@@ -122,27 +145,50 @@ const findDoctorFlow = ai.defineFlow(
     name: 'findDoctorFlow',
     inputSchema: FindDoctorBySymptomsInputSchema,
     outputSchema: FindDoctorBySymptomsOutputSchema,
+    tools: [getDoctorsFromCSVTool], // Rendre le tool disponible pour le flow (même si pas appelé directement par le LLM ici)
   },
   async (input) => {
-    const {output} = await prompt(input);
+    const {output: llmOutput} = await prompt(input);
 
-    if (!output?.suggestedSpecialty) {
-      // Fallback si l'IA ne retourne pas de spécialité
-      return {
-        suggestedSpecialty: 'Médecine Générale',
-        reasoning: 'Les informations fournies n"ont pas permis de déterminer une spécialité spécifique. Un médecin généraliste est un bon point de départ pour évaluer vos symptômes.',
-        doctors: getSimulatedDoctors('Médecine Générale', input.postalCode),
-        searchNote: 'Note : Les médecins listés ci-dessous sont des exemples simulés. Cette fonctionnalité sera bientôt connectée à une vraie base de données.'
-      };
+    let suggestedSpecialty = 'Médecine Générale';
+    let reasoning = 'Les informations fournies n"ont pas permis de déterminer une spécialité spécifique. Un médecin généraliste est un bon point de départ pour évaluer vos symptômes.';
+    let searchNote = 'Note : Les médecins listés ci-dessous proviennent d"une source de données locale (fichier CSV). Assurez-vous que ce fichier est à jour et correctement formaté. Si aucun médecin n"est trouvé, essayez d"élargir vos critères ou de vérifier la source de données.';
+
+    if (llmOutput?.suggestedSpecialty) {
+      suggestedSpecialty = llmOutput.suggestedSpecialty;
+      reasoning = llmOutput.reasoning;
     }
     
-    const simulatedDoctors = getSimulatedDoctors(output.suggestedSpecialty, input.postalCode);
+    // Appel du Tool pour récupérer les médecins du CSV
+    const doctorsFromCSV = await getDoctorsFromCSVTool({
+      specialty: suggestedSpecialty,
+      postalCode: input.postalCode,
+    });
+    
+    if (doctorsFromCSV.length === 0 && suggestedSpecialty !== 'Médecine Générale') {
+        // Si aucun médecin n'est trouvé pour la spécialité suggérée (et ce n'est pas déjà MG),
+        // essayer de chercher des médecins généralistes comme fallback.
+        const generalPractitioners = await getDoctorsFromCSVTool({
+            specialty: 'Médecine Générale',
+            postalCode: input.postalCode,
+        });
+        if (generalPractitioners.length > 0) {
+            searchNote += ' Aucun médecin trouvé pour la spécialité suggérée, affichage des médecins généralistes disponibles.';
+            return {
+                suggestedSpecialty: 'Médecine Générale (Fallback)',
+                reasoning: `Aucun médecin trouvé pour "${suggestedSpecialty}" avec les critères fournis. Voici des médecins généralistes qui pourraient vous orienter. Raison initiale pour "${suggestedSpecialty}": ${reasoning}`,
+                doctors: generalPractitioners,
+                searchNote,
+            };
+        }
+    }
+
 
     return {
-      suggestedSpecialty: output.suggestedSpecialty,
-      reasoning: output.reasoning,
-      doctors: simulatedDoctors,
-      searchNote: 'Note : Les médecins listés ci-dessous sont des exemples simulés pour illustrer la fonctionnalité. Une recherche réelle dans une base de données de médecins sera implémentée prochainement.'
+      suggestedSpecialty,
+      reasoning,
+      doctors: doctorsFromCSV,
+      searchNote
     };
   }
 );
