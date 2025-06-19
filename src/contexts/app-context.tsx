@@ -61,8 +61,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setUserRoleState(role);
   }, []);
 
+  // Simule l'ajout d'un dossier patient via une API backend
   const addPatientRecord = useCallback(async (recordInput: PatientRecordInput): Promise<PatientRecordServerResponse | null> => {
-    console.log('[AppContext] addPatientRecord appelé avec:', recordInput);
+    console.log('[AppContext] addPatientRecord appelé avec (API):', recordInput);
     try {
       const response = await fetch('/api/patient-records', {
         method: 'POST',
@@ -70,21 +71,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify(recordInput),
       });
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Erreur non-JSON lors de la création.' }));
+        const errorData = await response.json().catch(() => ({ message: `Erreur ${response.statusText || response.status} lors de la création. Réponse non-JSON.` }));
         console.error('Erreur API (addPatientRecord):', response.status, errorData);
-        throw new Error(errorData.message || `Erreur ${response.status} lors de la création de la fiche patient.`);
+        const backendErrorMessage = errorData.error ? ` Détail: ${errorData.error}` : '';
+        throw new Error(`${errorData.message || `Erreur ${response.status} lors de la création de la fiche patient.`}${backendErrorMessage}`);
       }
       return await response.json();
     } catch (error) {
       console.error("Erreur dans addPatientRecord (AppContext):", error);
-      // Pour que le composant puisse afficher l'erreur, relancez-la ou retournez une valeur qui l'indique.
-      // Dans ce cas, le composant gère déjà l'erreur si la promesse est rejetée.
-      throw error;
+      throw error; // Relancer pour que le composant puisse gérer
     }
   }, []);
 
+  // Simule la récupération d'un dossier patient par ID depuis une API backend
   const getPatientRecordById = useCallback(async (id: string): Promise<PatientRecordServerResponse | null> => {
-    console.log('[AppContext] getPatientRecordById appelé pour id:', id);
+    console.log('[AppContext] getPatientRecordById appelé pour id (API):', id);
     if (!id) {
         console.warn('[AppContext] getPatientRecordById: ID non fourni.');
         return null;
@@ -92,10 +93,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const response = await fetch(`/api/patient-records/${id}`);
       if (!response.ok) {
-        if (response.status === 404) return null; // Non trouvé
-        const errorData = await response.json().catch(() => ({ message: 'Erreur non-JSON lors de la récupération.' }));
+        if (response.status === 404) return null;
+        const errorData = await response.json().catch(() => ({ message: `Erreur ${response.statusText || response.status} lors de la récupération. Réponse non-JSON.` }));
         console.error('Erreur API (getPatientRecordById):', response.status, errorData);
-        throw new Error(errorData.message || `Erreur ${response.status} lors de la récupération de la fiche patient.`);
+        const backendErrorMessage = errorData.error ? ` Détail: ${errorData.error}` : '';
+        throw new Error(`${errorData.message || `Erreur ${response.status} lors de la récupération de la fiche patient.`}${backendErrorMessage}`);
       }
       return await response.json();
     } catch (error) {
@@ -104,14 +106,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Simule la récupération de tous les dossiers patients depuis une API backend
   const getPatientRecords = useCallback(async (): Promise<PatientRecordServerResponse[]> => {
-    console.log('[AppContext] getPatientRecords appelé.');
+    console.log('[AppContext] getPatientRecords appelé (API).');
     try {
       const response = await fetch('/api/patient-records');
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Erreur non-JSON lors de la listage.' }));
+        // Tentative de parser le JSON pour obtenir un message d'erreur plus précis du backend
+        const errorData = await response.json().catch(() => ({ 
+            message: `Erreur ${response.statusText || response.status} lors de la récupération des fiches. Réponse non-JSON.`,
+            error: null // Assure que errorData.error existe
+        }));
         console.error('Erreur API (getPatientRecords):', response.status, errorData);
-        throw new Error(errorData.message || `Erreur ${response.status} lors de la récupération des fiches patients.`);
+        // Construit un message d'erreur plus informatif si errorData.error (venant du backend) est disponible
+        const backendSpecificError = errorData.error ? String(errorData.error) : null;
+        const primaryMessage = errorData.message || `Erreur ${response.status} lors de la récupération des fiches patients.`;
+        
+        let fullErrorMessage = primaryMessage;
+        if (backendSpecificError && primaryMessage.toLowerCase().includes('internal server error')) {
+          // Si le message principal est générique et qu'un détail backend existe, préférer ou ajouter le détail
+          fullErrorMessage = `Erreur serveur: ${backendSpecificError} (Message original: ${primaryMessage})`;
+        } else if (backendSpecificError) {
+          fullErrorMessage = `${primaryMessage} (Détail: ${backendSpecificError})`;
+        }
+        
+        throw new Error(fullErrorMessage);
       }
       return await response.json();
     } catch (error) {
