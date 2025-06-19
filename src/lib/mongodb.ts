@@ -49,10 +49,24 @@ if (process.env.NODE_ENV === 'development') {
 
 export async function getDb(): Promise<Db> {
   try {
+    console.log('[DEBUG] === DÉBUT DE getDb() ===');
+    console.log('[DEBUG] MONGODB_URI:', process.env.MONGODB_URI);
+    console.log('[DEBUG] DB Name:', dbName);
+    console.log('[DEBUG] NODE_ENV:', process.env.NODE_ENV);
+    
+    console.log('[DEBUG] Tentative de connexion à MongoDB...');
     const mongoClient = await clientPromise;
-    return mongoClient.db(dbName);
+    console.log('[DEBUG] ✅ MongoDB client connecté avec succès');
+    
+    const db = mongoClient.db(dbName);
+    console.log('[DEBUG] ✅ Base de données récupérée:', dbName);
+    
+    return db;
   } catch (error) {
-    console.error('[MongoDB] Failed to connect to the database:', error);
+    console.error('[DEBUG] ❌ ERREUR dans getDb():', error);
+    console.error('[DEBUG] Type d\'erreur:', typeof error);
+    console.error('[DEBUG] Stack trace:', error instanceof Error ? error.stack : 'Pas de stack trace');
+    
     throw new Error('Failed to connect to the database.');
   }
 }
