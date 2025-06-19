@@ -10,12 +10,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, FilePlus, User, CalendarDays, VenetianMask, Stethoscope, StickyNote } from 'lucide-react';
-import { useAppContext } from '@/contexts/app-context';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useAppContext, type PatientRecordInput } from '@/contexts/app-context';
+import { useRouter } from 'next/navigation'; 
 
 export default function NouvelleFichePage() {
   const { addPatientRecord } = useAppContext();
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter(); 
   
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -40,21 +40,37 @@ export default function NouvelleFichePage() {
       return;
     }
 
+    const recordInput: PatientRecordInput = {
+      patientFirstName: firstName,
+      patientLastName: lastName,
+      patientDOB: dob, // Garder comme string, le backend/DB le convertira en Date
+      patientSex: sex,
+      disease,
+      notes,
+    };
+
     try {
-      addPatientRecord({ firstName, lastName, dob, sex, disease, notes });
-      setSuccessMessage("Fiche de suivi ajoutée avec succès ! Redirection en cours...");
-      // Reset form
-      setFirstName('');
-      setLastName('');
-      setDob('');
-      setSex('');
-      setDisease('');
-      setNotes('');
-      setTimeout(() => {
-        router.push('/medecin/patients'); // Redirect to patient list
-      }, 2000);
+      // TODO: Vérifier que l'utilisateur médecin est bien authentifié avant cet appel.
+      // Le doctorId devrait être récupéré côté backend à partir de la session de l'utilisateur.
+      const newRecord = await addPatientRecord(recordInput);
+      if (newRecord) {
+        setSuccessMessage(`Fiche de suivi pour ${newRecord.patientFirstName} ${newRecord.patientLastName} (ID: ${newRecord.id}) ajoutée (simulation API). Redirection...`);
+        // Reset form
+        setFirstName('');
+        setLastName('');
+        setDob('');
+        setSex('');
+        setDisease('');
+        setNotes('');
+        setTimeout(() => {
+          router.push('/medecin/patients'); 
+        }, 2500);
+      } else {
+        // Gérer le cas où newRecord est null si addPatientRecord peut retourner null en cas d'erreur API contrôlée
+         setError('La création de la fiche a échoué (simulation API).');
+      }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Une erreur inconnue est survenue.');
+      setError(e instanceof Error ? e.message : 'Une erreur inconnue est survenue lors de l\'ajout de la fiche.');
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +85,7 @@ export default function NouvelleFichePage() {
             Créer une Nouvelle Fiche de Suivi Patient
           </CardTitle>
           <CardDescription>
-            Remplissez les informations ci-dessous pour ajouter une nouvelle fiche de suivi pour un patient.
+            Remplissez les informations ci-dessous pour ajouter une nouvelle fiche de suivi pour un patient. Ces données seront envoyées à votre backend.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -125,7 +141,7 @@ export default function NouvelleFichePage() {
           <CardFooter className="flex flex-col items-start gap-4">
             <Button type="submit" disabled={isLoading} size="lg">
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FilePlus className="mr-2 h-4 w-4" />}
-              Enregistrer la Fiche
+              Enregistrer la Fiche (via API)
             </Button>
             {error && (
               <Alert variant="destructive" className="w-full">
@@ -135,7 +151,7 @@ export default function NouvelleFichePage() {
             )}
             {successMessage && (
               <Alert variant="default" className="w-full bg-green-100 border-green-300 text-green-700">
-                <AlertTitle>Succès</AlertTitle>
+                <AlertTitle>Succès (Simulation)</AlertTitle>
                 <AlertDescription>{successMessage}</AlertDescription>
               </Alert>
             )}
@@ -145,4 +161,3 @@ export default function NouvelleFichePage() {
     </div>
   );
 }
-
