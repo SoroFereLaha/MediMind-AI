@@ -2,9 +2,7 @@
 import type { Metadata } from 'next';
 import './globals.css'; // Global styles
 import { AppLayout } from '@/components/layout/app-layout';
-import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from '@/components/theme-provider';
-import { AppProvider } from '@/contexts/app-context'; // Import AppProvider
+import { Providers } from '@/components/providers';
 
 export const metadata: Metadata = {
   title: {
@@ -34,17 +32,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body className={`${bodyFontClass} antialiased bg-background text-foreground`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AppProvider> {/* Wrap AppLayout with AppProvider */}
+        <Providers>
+          <div vaul-drawer-wrapper="" className="bg-background h-full">
             <AppLayout>{children}</AppLayout>
-          </AppProvider>
-          <Toaster />
-        </ThemeProvider>
+          </div>
+        </Providers>
       </body>
     </html>
   );

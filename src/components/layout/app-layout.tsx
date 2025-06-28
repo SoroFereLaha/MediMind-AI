@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { getNavigationItems, getFooterNavigationItems, type NavItem } from '@/components/navigation-items';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Menu, LogOut } from 'lucide-react';
+import { Oval } from 'react-loader-spinner';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useAppContext } from '@/contexts/app-context';
@@ -28,7 +29,7 @@ import { RoleSelector } from '@/components/auth/role-selector';
 
 function Logo() {
   const logoText = "MediMind IA";
-  const { userRole } = useAppContext();
+  const { userRole, isInitializing } = useAppContext();
   const homeHref = userRole === 'medecin' ? '/medecin' : '/';
 
   return (
@@ -102,7 +103,8 @@ function ConditionalMobileHeader() {
 }
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { userRole, setUserRole } = useAppContext();
+  const { userRole, setUserRole, isInitializing } = useAppContext();
+  const router = useRouter();
   
   const navigationItems = getNavigationItems(userRole);
   const footerNavigationItems = getFooterNavigationItems(userRole);
@@ -111,12 +113,37 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const footerRights = `© ${new Date().getFullYear()} MediMind IA. Tous droits réservés. Confidentialité des données assurée.`;
 
   const handleLogout = () => {
+    // Clear context
+    setUserRole(null);
+    // Clear role cookie
+    document.cookie = 'role=; Max-Age=0; path=/';
+    // Redirect to landing page (role selector will appear)
+    if (router) router.replace('/');
     setUserRole(null);
     // Potentially redirect to home or login page
   };
 
+  if (isInitializing) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Oval
+          height={80}
+          width={80}
+          color="#3b82f6"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel='oval-loading'
+          secondaryColor="#bfdbfe"
+          strokeWidth={3}
+          strokeWidthSecondary={3}
+        />
+      </div>
+    );
+  }
+
   if (!userRole) {
-    return <RoleSelector />;
+    return <RoleSelector onRoleSelect={setUserRole} />;
   }
 
   return (

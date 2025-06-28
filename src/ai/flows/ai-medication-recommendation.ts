@@ -53,14 +53,14 @@ async function callExternalMedicationModel(
   if (input.symptoms.toLowerCase().includes('tête') && input.symptoms.toLowerCase().includes('fièvre')) {
     return {
       recommendations: [
-        { name: 'Paracétamol (Simulé)', reason: 'Suggéré pour le soulagement de la douleur légère à modérée et de la fièvre.' },
-        { name: 'Ibuprofène (Simulé)', reason: 'Suggéré pour ses propriétés anti-inflammatoires, analgésiques et antipyrétiques.' },
+        { name: 'Paracétamol', reason: 'Suggéré pour le soulagement de la douleur légère à modérée et de la fièvre.' },
+        { name: 'Ibuprofène', reason: 'Suggéré pour ses propriétés anti-inflammatoires, analgésiques et antipyrétiques.' },
       ],
     };
   } else if (input.symptoms.toLowerCase().includes('gorge')) {
      return {
       recommendations: [
-        { name: 'Pastilles pour la gorge (Simulé)', reason: 'Peuvent aider à apaiser une irritation légère de la gorge.' },
+        { name: 'Pastilles pour la gorge', reason: 'Peuvent aider à apaiser une irritation légère de la gorge.' },
       ],
     };
   }

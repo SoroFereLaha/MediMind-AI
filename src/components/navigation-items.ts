@@ -1,88 +1,78 @@
-
-import type { LucideIcon } from 'lucide-react';
-import { Home, UserCheck, BrainCircuit, MessageSquareHeart, ShieldCheck, Stethoscope, Users, FilePlus, LayoutDashboard } from 'lucide-react';
+import { Bot, FileText, Briefcase, Home, Users, ShieldCheck, LayoutDashboard } from 'lucide-react';
 import type { UserRole } from '@/contexts/app-context';
+import type { LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   label: string;
   href: string;
   icon: LucideIcon;
   match?: 'exact' | 'startsWith';
-  roles?: UserRole[]; // undefined means visible to all (even if no role selected)
+  roles?: UserRole[];
 }
 
-const commonNavItems: NavItem[] = [
-   {
-    label: "Confidentialité", // Renamed for clarity as it's common
-    href: '/privacy',
-    icon: ShieldCheck,
-    match: 'exact',
-  }
-];
-
+// ===================================
+// Patient Navigation (Refactored)
+// ===================================
 const patientNavItems: NavItem[] = [
   {
-    label: "Accueil Patient",
-    href: '/', // Assuming patient home is root
-    icon: Home,
-    match: 'exact',
-    roles: ['patient']
-  },
-  {
-    label: "Entretien Patient",
-    href: '/interview',
-    icon: UserCheck,
+    label: 'Assistant Santé',
+    href: '/health-assistant',
+    icon: Bot,
     match: 'startsWith',
-    roles: ['patient']
+    roles: ['patient'],
   },
+
   {
-    label: "Avis de Spécialistes",
-    href: '/insights',
-    icon: BrainCircuit,
+    label: 'Médicaments',
+    href: '/medications',
+    icon: Briefcase,
     match: 'startsWith',
-    roles: ['patient']
+    roles: ['patient'],
   },
-  {
-    label: "Trouver un Médecin",
-    href: '/find-doctor',
-    icon: Stethoscope,
-    match: 'startsWith',
-    roles: ['patient']
-  },
-  {
-    label: "Recommandations (IA)",
-    href: '/recommendations',
-    icon: MessageSquareHeart,
-    match: 'startsWith',
-    roles: ['patient']
-  }
 ];
 
+// ===================================
+// Doctor Navigation (Unchanged)
+// ===================================
 const medecinNavItems: NavItem[] = [
   {
-    label: "Tableau de Bord",
+    label: 'Tableau de Bord',
     href: '/medecin',
     icon: LayoutDashboard,
     match: 'exact',
-    roles: ['medecin']
+    roles: ['medecin'],
   },
   {
-    label: "Gérer Patients",
+    label: 'Gérer Patients',
     href: '/medecin/patients',
     icon: Users,
     match: 'startsWith',
-    roles: ['medecin']
+    roles: ['medecin'],
   },
   {
-    label: "Nouvelle Fiche Suivi",
-    href: '/medecin/patients/nouveau',
-    icon: FilePlus,
-    match: 'exact',
-    roles: ['medecin']
+    label: 'Recherche Documents',
+    href: '/medecin/recherche-documents',
+    icon: FileText,
+    match: 'startsWith',
+    roles: ['medecin'],
   },
 ];
 
+// ===================================
+// Common & Footer Links
+// ===================================
+const commonNavItems: NavItem[] = [
+  {
+    label: 'Confidentialité',
+    href: '/privacy',
+    icon: ShieldCheck,
+    match: 'exact',
+  },
+];
 
+// ===================================
+// Exported Functions
+// ===================================
 export const getNavigationItems = (role: UserRole): NavItem[] => {
   if (role === 'patient') {
     return patientNavItems;
@@ -90,13 +80,10 @@ export const getNavigationItems = (role: UserRole): NavItem[] => {
   if (role === 'medecin') {
     return medecinNavItems;
   }
-  // If no role or unknown role, show minimal/public items or patient items by default
-  // For now, let's default to patient view if no specific role or unauthenticated
-  return patientNavItems; 
+  // Default to patient view if no specific role or unauthenticated
+  return patientNavItems;
 };
 
-export const getFooterNavigationItems = (role: UserRole): NavItem[] => {
-  // Footer items could also be role-dependent if needed
-  // For now, common privacy link for all
+export const getFooterNavigationItems = (): NavItem[] => {
   return commonNavItems;
 };

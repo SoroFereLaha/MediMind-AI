@@ -3,7 +3,8 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { PageHeader } from '@/components/page-header';
-import { Users, Search, FileText, UserPlus, Loader2 } from 'lucide-react';
+import { Users, Search, FileText, UserPlus } from 'lucide-react';
+import { Oval } from 'react-loader-spinner';
 import { useAppContext, type PatientRecordServerResponse } from '@/contexts/app-context';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -100,7 +101,18 @@ export default function ListePatientsPage() {
 
       {isLoading && (
         <div className="flex justify-center items-center py-10">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          <Oval
+            height={80}
+            width={80}
+            color="#bfdbfe"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+            ariaLabel='oval-loading'
+            secondaryColor="#3b82f6"
+            strokeWidth={3}
+            strokeWidthSecondary={3}
+          />
           <p className="ml-4 text-lg">Chargement des fiches patients...</p>
         </div>
       )}

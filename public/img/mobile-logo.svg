@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Simple, scalable SVG logo for MediMind-AI mobile app.
+  Colours follow Tailwind primary palette (#3b82f6) and dark-mode friendly accents.
+-->
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="128" cy="128" r="120" fill="url(#grad)"/>
+
+  <!-- Brain outline -->
+  <path d="M85 103c0-15.464 12.536-28 28-28h30c17.673 0 32 14.327 32 32v44c0 17.673-14.327 32-32 32h-46c-13.807 0-25-11.193-25-25v-55z" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Pulse/heartbeat -->
+  <polyline points="48 128 70 128 84 100 110 156 134 116 150 140 176 128 208 128" stroke="white" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -81,3 +81,5 @@ firebase-debug.*.log
 .idx/dev.nix
 /ide.json
 /.config/
+MediMind-AI_backup/
+medical_app/

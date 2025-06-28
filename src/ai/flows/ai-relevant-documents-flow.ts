@@ -18,20 +18,20 @@ const PatientContextSchema = z.object({
   currentNotes: z.string().optional().describe("Notes additionnelles ou observations récentes sur le patient."),
 });
 
-export const RelevantDocumentInputSchema = z.object({
+const RelevantDocumentInputSchema = z.object({
   patientContext: PatientContextSchema,
 });
 export type RelevantDocumentInput = z.infer<typeof RelevantDocumentInputSchema>;
 
 const DocumentSchema = z.object({
   title: z.string().describe("Titre du document pertinent."),
-  url: z.string().url().describe("URL menant au document (peut être un placeholder pour la simulation)."),
+  url: z.string().describe("URL menant au document (peut être un placeholder pour la simulation)."),
   summary: z.string().optional().describe("Bref résumé du contenu du document ou pourquoi il est pertinent."),
   source: z.string().optional().describe("Source du document (ex: PubMed, Journal Médical Spécifique).")
 });
 export type Document = z.infer<typeof DocumentSchema>;
 
-export const RelevantDocumentOutputSchema = z.object({
+const RelevantDocumentOutputSchema = z.object({
   documents: z.array(DocumentSchema).describe("Liste de documents jugés pertinents."),
   reasoning: z.string().optional().describe("Brève explication de la stratégie de recherche ou des types de documents ciblés.")
 });
@@ -145,6 +145,7 @@ const prompt = ai.definePrompt({
   name: 'relevantDocumentsPrompt',
   input: { schema: RelevantDocumentInputSchema },
   output: { schema: RelevantDocumentOutputSchema },
+  tools: [searchExternalDocumentsTool],
   system: `Vous êtes un assistant IA spécialisé dans la recherche documentaire médicale.
 Votre rôle est d'identifier des documents (articles de recherche, directives cliniques, études de cas)
 qui seraient les plus pertinents pour un médecin traitant un patient avec le contexte fourni.
@@ -169,7 +170,6 @@ const relevantDocumentsFlow = ai.defineFlow(
     name: 'relevantDocumentsFlow',
     inputSchema: RelevantDocumentInputSchema,
     outputSchema: RelevantDocumentOutputSchema,
-    tools: [searchExternalDocumentsTool],
   },
   async (input) => {
     

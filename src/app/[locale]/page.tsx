@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import Link from "next/link";
-import { ArrowRight, Bot, Shield, BrainCircuit } from "lucide-react";
+import { ArrowRight, Bot, Shield, BrainCircuit, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppContext } from '@/contexts/app-context';
@@ -61,22 +61,25 @@ export default function HomePage({ params: routeParams }: { params: { locale: st
           <p className="text-lg text-foreground mb-6">
             {startJourneyDescription}
           </p>
-          <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow">
-            <Link href="/interview">
+          <Button asChild size="lg" className="shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]">
+            <Link href="/health-assistant">
               {startInterviewButton} <ArrowRight className="ms-2 h-5 w-5" />
             </Link>
           </Button>
         </div>
         <div>
-          <Image
-            src="https://placehold.co/600x400.png"
-            alt={welcomeTitle}
-            width={600}
-            height={400}
-            className="rounded-lg shadow-md object-cover"
-            data-ai-hint="medical AI"
-            priority
-          />
+          <div className="relative">
+            <Image
+              src="/img/10183033.jpg"
+              alt={welcomeTitle}
+              width={600}
+              height={400}
+              className="rounded-lg shadow-2xl object-cover"
+              data-ai-hint="medical AI"
+              priority
+            />
+            <div className="absolute inset-0 rounded-lg bg-primary/80 opacity-0 mix-blend-multiply transition-opacity duration-300 dark:opacity-50"></div>
+          </div>
         </div>
       </section>
 
@@ -85,7 +88,7 @@ export default function HomePage({ params: routeParams }: { params: { locale: st
           {howItWorksTitle}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
+          <Card className="shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-primary">
                 <Bot className="h-6 w-6" />
@@ -98,7 +101,7 @@ export default function HomePage({ params: routeParams }: { params: { locale: st
               </p>
             </CardContent>
           </Card>
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
+          <Card className="shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-primary">
                 <BrainCircuit className="h-6 w-6" />
@@ -111,7 +114,7 @@ export default function HomePage({ params: routeParams }: { params: { locale: st
               </p>
             </CardContent>
           </Card>
-          <Card className="shadow-md hover:shadow-lg transition-shadow">
+          <Card className="shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-primary">
                 <Shield className="h-6 w-6" />

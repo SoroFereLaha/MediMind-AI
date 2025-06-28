@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Pill, AlertTriangle, User, ShieldAlert, HeartCrack, ListPlus, ShieldCheck, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Pill, AlertTriangle, User, ShieldAlert, HeartCrack, ListPlus, ShieldCheck, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { getCurrentPosition, searchHealthEstablishments, type HealthEstablishment } from '@/lib/services/locationService';
 import { 
   getMedicationRecommendations, 
   type MedicationRecommendationOutput,
@@ -16,6 +17,19 @@ import {
 } from '@/ai/flows/ai-medication-recommendation';
 
 export function MedicationForm() {
+  async function handleFindPharmacies() {
+    try {
+      setIsSearching(true);
+      const { lat, lon } = await getCurrentPosition();
+      const results = await searchHealthEstablishments({ lat, lon, type: 'pharmacie', rayon: 5 });
+      setPharmacies(results);
+    } catch (e) {
+      console.error(e);
+      alert('Erreur lors de la recherche de pharmacies.');
+    } finally {
+      setIsSearching(false);
+    }
+  }
   const [symptoms, setSymptoms] = useState('');
   const [age, setAge] = useState<string>('');
   const [knownAllergies, setKnownAllergies] = useState('');
@@ -24,6 +38,8 @@ export function MedicationForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MedicationRecommendationOutput | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [pharmacies, setPharmacies] = useState<HealthEstablishment[]>([]);
   const [showOptionalFields, setShowOptionalFields] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -167,20 +183,60 @@ export function MedicationForm() {
           <h3 className="font-headline text-xl font-semibold mb-2">Suggestions pour : "{result.processedSymptoms}"</h3>
           
           {result.suggestedMedications.length > 0 ? (
-            <ul className="space-y-4">
-              {result.suggestedMedications.map((med, index) => (
-                <li key={index} className="p-4 border rounded-md shadow-sm bg-card">
-                  <p className="font-semibold text-lg text-primary">{med.name}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{med.reason}</p>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="space-y-4 mb-6">
+                {result.suggestedMedications.map((med, index) => (
+                  <li key={index} className="p-4 border rounded-md shadow-sm bg-card">
+                    <p className="font-semibold text-lg text-primary">{med.name}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{med.reason}</p>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex justify-center mb-8">
+                <Button 
+                  variant="outline"
+                  onClick={handleFindPharmacies}
+                  className="flex items-center gap-2"
+                  disabled={isSearching}
+                >
+                  {isSearching ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Recherche...
+                    </>
+                  ) : (
+                    <>
+                      <MapPin className="h-4 w-4" /> Trouver une pharmacie proche
+                    </>
+                  )}
+                </Button>
+              </div>
+            </>
           ) : (
-            <p>Aucune suggestion de médicament spécifique n'a été trouvée pour les symptômes fournis et les informations complémentaires. Cela ne signifie pas qu'il n'existe pas de traitement. Veuillez consulter un professionnel de santé.</p>
+            <p className="mb-6">Aucune suggestion de médicament spécifique n'a été trouvée pour les symptômes fournis et les informations complémentaires. Cela ne signifie pas qu'il n'existe pas de traitement. Veuillez consulter un professionnel de santé.</p>
           )}
+        </div>
+      )}
+
+      {pharmacies.length > 0 && (
+        <div className="p-6 border-t">
+          <h3 className="text-lg font-semibold mb-4">Pharmacies à proximité</h3>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {pharmacies.map((pharma) => (
+              <div key={pharma.id} className="p-4 border rounded-lg bg-card/70 backdrop-blur-sm shadow-sm hover:border-primary/60 transition-colors">
+                <h4 className="font-medium text-base text-foreground">{pharma.name}</h4>
+                <p className="text-sm text-muted-foreground">{pharma.address}</p>
+                <p className="text-sm text-muted-foreground">{pharma.distance.toFixed(2)} km</p>
+                {pharma.phone && (<p className="text-xs text-muted-foreground">{pharma.phone}</p>)}
+                {pharma.website && (
+                  <a href={pharma.website.startsWith('http') ? pharma.website : `http://${pharma.website}`} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline">
+                    Site web
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </Card>
   );
 }
-    

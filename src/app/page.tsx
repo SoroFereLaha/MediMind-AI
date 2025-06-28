@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import Link from "next/link";
-import { ArrowRight, Bot, Shield, BrainCircuit, Loader2 } from "lucide-react";
+import { ArrowRight, Bot, Shield, BrainCircuit } from "lucide-react";
+import { Oval } from 'react-loader-spinner';
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppContext } from '@/contexts/app-context';
@@ -40,7 +41,23 @@ export default function HomePage() {
 
   if (userRole === 'medecin') {
     // This will ideally not be visible for long due to redirect
-    return <div className="flex justify-center items-center h-screen"><Loader2 className="h-12 w-12 animate-spin text-primary" /> Redirection...</div>;
+    return (
+      <div className="flex flex-col justify-center items-center h-screen">
+        <Oval
+          height={80}
+          width={80}
+          color="#bfdbfe"
+          wrapperStyle={{}}
+          wrapperClass=""
+          visible={true}
+          ariaLabel='oval-loading'
+          secondaryColor="#3b82f6"
+          strokeWidth={3}
+          strokeWidthSecondary={3}
+        />
+        <p className="mt-4 text-lg">Redirection en cours...</p>
+      </div>
+    );
   }
 
   return (
@@ -59,21 +76,24 @@ export default function HomePage() {
             {startJourneyDescription}
           </p>
           <Button asChild size="lg" className="shadow-md hover:shadow-lg transition-shadow">
-            <Link href="/interview">
+            <Link href="/health-assistant">
               {startInterviewButton} <ArrowRight className="ms-2 h-5 w-5" />
             </Link>
           </Button>
         </div>
         <div>
-          <Image
-            src="https://placehold.co/600x400.png"
-            alt={welcomeTitle}
-            width={600}
-            height={400}
-            className="rounded-lg shadow-md object-cover"
-            data-ai-hint="medical AI"
-            priority
-          />
+          <div className="relative">
+            <Image
+              src="/img/10183033.jpg"
+              alt={welcomeTitle}
+              width={600}
+              height={400}
+              className="rounded-lg shadow-2xl object-cover"
+              data-ai-hint="medical AI"
+              priority
+            />
+            <div className="absolute inset-0 rounded-lg bg-primary/80 opacity-0 mix-blend-multiply transition-opacity duration-300 dark:opacity-50"></div>
+          </div>
         </div>
       </section>
 

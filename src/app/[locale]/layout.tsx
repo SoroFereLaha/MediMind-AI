@@ -1,8 +1,8 @@
 
 import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/app-layout';
-import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from '@/components/theme-provider';
+import { redirect } from 'next/navigation';
+import { Providers } from '@/components/providers';
 
 console.log('[LocaleLayout] Root module evaluated (internationalization disabled)');
 
@@ -17,23 +17,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function LocaleLayout({
   children,
-  params: routeParams 
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-  params: { locale: string };
-}>) {
-  const locale = routeParams.locale;
+  params: any;
+}) {
+  const { locale } = await params as { locale: string };
+  // Redirect any stray patient path to root
+  if (locale === 'patient') {
+    redirect('/');
+  }
   console.log(`[${locale}/layout.tsx LocaleLayout] Top of LocaleLayout. Locale from routeParams: "${locale}" (type: ${typeof locale}) (i18n disabled)`);
 
   return (
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
+      <Providers>
         <AppLayout>{children}</AppLayout>
-        <Toaster />
-      </ThemeProvider>
+      </Providers>
   );
 }

@@ -1,43 +1,87 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import type { PatientRecordServerResponse } from '@/contexts/app-context';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// GET - Récupérer une fiche patient par ID
+export async function GET(request: NextRequest) {
   try {
-    const { id } = params;
-    if (!ObjectId.isValid(id)) {
-      return NextResponse.json({ message: 'Invalid patient record ID format' }, { status: 400 });
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ message: 'ID de patient invalide' }, { status: 400 });
     }
 
     const db = await getDb();
-    const recordFromDb = await db.collection('patientRecords').findOne({ _id: new ObjectId(id) });
+    const patient = await db.collection<PatientRecordServerResponse>('patientRecords').findOne({ _id: new ObjectId(id) });
 
-    if (!recordFromDb) {
-      return NextResponse.json({ message: 'Patient record not found' }, { status: 404 });
+    if (!patient) {
+      return NextResponse.json({ message: `Fiche patient non trouvée pour l'ID: ${id}` }, { status: 404 });
+    }
+
+    return NextResponse.json(patient);
+  } catch (error) {
+    console.error("Erreur API [GET /api/patient-records/[id]]:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+    return NextResponse.json({ message: 'Erreur interne du serveur', error: errorMessage }, { status: 500 });
+  }
+}
+
+// PUT - Mettre à jour une fiche patient
+export async function PUT(request: NextRequest) {
+  try {
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ message: 'ID de patient invalide' }, { status: 400 });
+    }
+
+    const body = await request.json();
+    // Empêcher la modification de l'ID et d'autres champs immuables
+    delete body._id;
+    delete body.patientId;
+    delete body.doctorId;
+    delete body.createdAt;
+    
+    const db = await getDb();
+    const result = await db.collection('patientRecords').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { ...body, updatedAt: new Date() } }
+    );
+
+    if (result.matchedCount === 0) {
+      return NextResponse.json({ message: 'Fiche patient non trouvée' }, { status: 404 });
+    }
+
+    const updatedPatient = await db.collection('patientrecords').findOne({ _id: new ObjectId(id) });
+    return NextResponse.json(updatedPatient);
+  } catch (error) {
+    console.error("Erreur API [PUT /api/patient-records/[id]]:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+    return NextResponse.json({ message: 'Erreur lors de la mise à jour', error: errorMessage }, { status: 500 });
+  }
+}
+
+// DELETE - Supprimer une fiche patient
+export async function DELETE(request: NextRequest) {
+  try {
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ message: 'ID de patient invalide' }, { status: 400 });
     }
     
-    const record: PatientRecordServerResponse = {
-      id: recordFromDb._id.toString(),
-      doctorId: recordFromDb.doctorId.toString(), // Ensure doctorId is string
-      patientFirstName: recordFromDb.patientFirstName,
-      patientLastName: recordFromDb.patientLastName,
-      patientDOB: recordFromDb.patientDOB.toISOString(),
-      patientSex: recordFromDb.patientSex,
-      disease: recordFromDb.disease,
-      notes: recordFromDb.notes,
-      createdAt: recordFromDb.createdAt.toISOString(),
-      updatedAt: recordFromDb.updatedAt.toISOString(),
-    };
+    const db = await getDb();
+    const result = await db.collection('patientRecords').deleteOne({ _id: new ObjectId(id) });
 
-    return NextResponse.json(record, { status: 200 });
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ message: 'Fiche patient non trouvée' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Fiche patient supprimée avec succès' }, { status: 200 });
   } catch (error) {
-    console.error(`API GET /api/patient-records/${params.id} - Failed to fetch patient record:`, error);
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return NextResponse.json({ message: 'Internal Server Error', error: errorMessage }, { status: 500 });
+    console.error("Erreur API [DELETE /api/patient-records/[id]]:", error);
+    const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+    return NextResponse.json({ message: 'Erreur lors de la suppression', error: errorMessage }, { status: 500 });
   }
 }

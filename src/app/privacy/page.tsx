@@ -17,16 +17,24 @@ export default function PrivacyPage() {
   React.useEffect(() => {
     setIsClient(true);
     const storedConsent = localStorage.getItem(LOCAL_STORAGE_CONSENT_KEY) as ConsentStatus | null;
+    // If a choice is already stored, use it.
     if (storedConsent && ['accepted', 'refused'].includes(storedConsent)) {
       setConsentStatus(storedConsent);
     } else {
-      setConsentStatus('pending');
+      // Otherwise, default to 'refused' and store this as the default choice.
+      setConsentStatus('refused');
+      localStorage.setItem(LOCAL_STORAGE_CONSENT_KEY, 'refused');
     }
   }, []);
 
   const handleConsentChange = (status: 'accepted' | 'refused') => {
     localStorage.setItem(LOCAL_STORAGE_CONSENT_KEY, status);
     setConsentStatus(status);
+    // Broadcast the change to other tabs
+    const channel = new BroadcastChannel('consent_channel');
+    channel.postMessage({ consent: status });
+    // The channel is intentionally not closed immediately to ensure message delivery.
+    // It will be garbage-collected automatically.
   };
 
   const getConsentMessage = () => {
@@ -53,7 +61,7 @@ export default function PrivacyPage() {
     }
   };
   
-  const consentInfo = getConsentMessage();
+  const consentMessageInfo = getConsentMessage();
 
   return (
     <div className="space-y-8">
@@ -135,10 +143,14 @@ export default function PrivacyPage() {
               
               {isClient && (
                 <div className="mt-4 p-3 border rounded-md">
-                  <div className="flex items-center">
-                    {consentInfo.icon}
-                    <p className={`font-medium ${consentInfo.color}`}>{consentInfo.text}</p>
-                  </div>
+                  {typeof consentMessageInfo === 'string' ? (
+                    <p>{consentMessageInfo}</p>
+                  ) : (
+                    <div className="flex items-center">
+                      {consentMessageInfo.icon}
+                      <span className={`ml-2 font-semibold ${consentMessageInfo.color}`}>{consentMessageInfo.text}</span>
+                    </div>
+                  )}
                 </div>
               )}
 

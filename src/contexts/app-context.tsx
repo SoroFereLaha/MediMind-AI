@@ -2,7 +2,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 export type UserRole = 'patient' | 'medecin' | null;
 
@@ -42,6 +42,7 @@ export interface PatientVoteStore {
 
 interface AppContextType {
   userRole: UserRole;
+  isInitializing: boolean;
   setUserRole: (role: UserRole) => void;
   addPatientRecord: (recordInput: PatientRecordInput) => Promise<PatientRecordServerResponse | null>;
   getPatientRecordById: (id: string) => Promise<PatientRecordServerResponse | null>;
@@ -55,10 +56,17 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [userRole, setUserRoleState] = useState<UserRole>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [documentVotes, setDocumentVotes] = useState<PatientVoteStore>({});
+
+  useEffect(() => {
+    // We no longer read from localStorage to ensure the role selector is shown on each new visit.
+    setIsInitializing(false);
+  }, []);
 
   const setUserRole = useCallback((role: UserRole) => {
     setUserRoleState(role);
+    // The role is now only stored in memory for the current session, and not persisted in localStorage.
   }, []);
 
   // Simule l'ajout d'un dossier patient via une API backend
@@ -163,8 +171,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [documentVotes]);
 
   return (
-    <AppContext.Provider value={{ 
+    <AppContext.Provider value={{
       userRole, 
+      isInitializing,
       setUserRole, 
       addPatientRecord, 
       getPatientRecordById,

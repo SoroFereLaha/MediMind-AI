@@ -76,16 +76,24 @@ export default function PrivacyPage() {
   React.useEffect(() => {
     setIsClient(true);
     const storedConsent = localStorage.getItem(LOCAL_STORAGE_CONSENT_KEY) as ConsentStatus | null;
-     if (storedConsent && ['accepted', 'refused'].includes(storedConsent)) {
+    // If a choice is already stored, use it.
+    if (storedConsent && ['accepted', 'refused'].includes(storedConsent)) {
       setConsentStatus(storedConsent);
     } else {
-      setConsentStatus('pending');
+      // Otherwise, default to 'refused' and store this as the default choice.
+      setConsentStatus('refused');
+      localStorage.setItem(LOCAL_STORAGE_CONSENT_KEY, 'refused');
     }
   }, []);
 
   const handleConsentChange = (status: 'accepted' | 'refused') => {
     localStorage.setItem(LOCAL_STORAGE_CONSENT_KEY, status);
     setConsentStatus(status);
+    // Broadcast the change to other tabs
+    const channel = new BroadcastChannel('consent_channel');
+    channel.postMessage({ consent: status });
+    // The channel is intentionally not closed immediately to ensure message delivery.
+    // It will be garbage-collected automatically.
   };
   
   const getConsentMessageInfo = () => {

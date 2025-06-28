@@ -1,6 +1,6 @@
 
 import { PageHeader } from '@/components/page-header';
-import { LayoutDashboard, Users, FilePlus } from 'lucide-react';
+import { LayoutDashboard, Users, FilePlus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,17 +49,20 @@ export default function MedecinDashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg hover:shadow-xl transition-shadow bg-accent/20 border-accent">
+        <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-accent-foreground">
-              {/* Placeholder for future feature */}
-              Statistiques (À venir)
+            <CardTitle className="flex items-center gap-2 text-primary">
+              <Search className="h-6 w-6" />
+              Recherche de Documents
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
             <CardDescription>
-              Visualisez des statistiques clés concernant votre activité et vos patients. (Fonctionnalité future)
+              Accédez à une base de connaissances médicales pour rechercher des articles, des études et des documents pertinents.
             </CardDescription>
+            <Button asChild className="w-full">
+              <Link href="/medecin/recherche-documents">Lancer une Recherche</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

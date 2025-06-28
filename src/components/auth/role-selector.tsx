@@ -4,14 +4,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppContext, UserRole } from "@/contexts/app-context";
+import { useRouter } from "next/navigation";
 import { User, Stethoscope } from "lucide-react";
 
 export function RoleSelector() {
   const { setUserRole } = useAppContext();
+  const router = useRouter();
 
   const handleSelectRole = (role: UserRole) => {
     if (role) {
       setUserRole(role);
+      // Persist role in cookie for 1 day
+      document.cookie = `role=${role}; path=/; max-age=${60 * 60 * 24}`;
+      // Navigate to the correct dashboard
+      router.replace(role === 'medecin' ? '/medecin' : '/patient');
     }
   };
 
