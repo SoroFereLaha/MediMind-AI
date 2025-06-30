@@ -9,6 +9,11 @@ export function middleware(request: NextRequest) {
   const role = request.cookies.get('role')?.value;
   const { pathname } = request.nextUrl;
 
+  // Pour les routes d'authentification, on laisse passer sans vérification
+  if (pathname.startsWith('/auth/')) {
+    return NextResponse.next();
+  }
+
   const isMedRoute = pathname === '/medecin' || pathname.startsWith('/medecin/');
   const isPatRoute = pathname === '/patient' || pathname.startsWith('/patient/');
 
@@ -18,7 +23,9 @@ export function middleware(request: NextRequest) {
       const denied = new URL('/403', request.url);
       return NextResponse.redirect(denied);
     }
-    // Si pas de rôle défini, on laisse passer pour permettre la sélection du rôle
+    // Si pas de rôle défini, rediriger vers la page de choix
+    const choicePage = new URL('/choice', request.url);
+    return NextResponse.redirect(choicePage);
   }
 
   return NextResponse.next();
@@ -34,6 +41,10 @@ export const config = {
     // all requests that have a locale prefix
     '/(fr|en)/:path*',
     // Enable redirects that add missing locales
-    '/((?!_next|_vercel|.*\\..*).*)'
+    '/((?!_next|_vercel|.*\\..*).*)',
+    // Allow direct access to auth routes
+    '/auth/:path*',
+    '/auth/login',
+    '/auth/register'
   ]
 };

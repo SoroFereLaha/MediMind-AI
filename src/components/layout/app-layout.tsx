@@ -103,6 +103,11 @@ function ConditionalMobileHeader() {
 }
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  // Pour les pages d'authentification, on ne montre pas le sélecteur de rôle ni la sidebar
+  if (pathname.startsWith('/auth')) {
+    return <>{children}</>;
+  }
   const { userRole, setUserRole, isInitializing } = useAppContext();
   const router = useRouter();
   

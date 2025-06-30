@@ -8,13 +8,10 @@ import type { z } from 'zod';
 
 // Type for medication recommendations
 interface ProcessedDrugRecommendation extends z.infer<typeof RecommendedMedicationSchema> {
-  // Add any additional fields needed for the form
-  nom?: string;
-  indication?: string;
+  // Champ supplémentaire spécifique au formulaire
   posologie_adulte?: string;
-  effets_secondaires?: string;
-  contre_indications?: string;
-  avertissements?: string;
+  // On conserve éventuellement "indication" si certaines API l'utilisent encore
+  indication?: string;
 }
 
 interface MedicationRecommendationResponse {

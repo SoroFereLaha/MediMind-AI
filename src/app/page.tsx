@@ -11,7 +11,7 @@ import { Oval } from 'react-loader-spinner';
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppContext } from '@/contexts/app-context';
-
+import { AppDownloadPopup } from '@/components/app-download-popup';
 
 export default function HomePage() {
   const { userRole } = useAppContext();
@@ -61,7 +61,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="space-y-8">
+    <>
+      {userRole === 'patient' && <AppDownloadPopup />}
+      <div className="space-y-8">
       <PageHeader
         title={welcomeTitle}
         description={welcomeDescription}
@@ -150,5 +152,6 @@ export default function HomePage() {
         </p>
       </section>
     </div>
+    </>
   );
 }

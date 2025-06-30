@@ -132,7 +132,9 @@ const medicationRecommendationFlow = ai.defineFlow(
       return {
         suggestedMedications: [],
         processedSymptoms: input.symptoms,
+        importantWarning: 'Avertissement : consultez toujours un professionnel de santé avant de prendre un médicament.',
       };
+
     }
     return output;
   }
