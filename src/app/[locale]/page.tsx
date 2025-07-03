@@ -11,8 +11,8 @@ import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppContext } from '@/contexts/app-context';
 
-export default function HomePage({ params: routeParams }: { params: { locale: string } }) {
-  const locale = routeParams.locale; // Still useful if you re-enable i18n later
+export default function HomePage() {
+
   const { userRole } = useAppContext();
   const router = useRouter();
 

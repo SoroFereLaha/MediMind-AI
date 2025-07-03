@@ -112,7 +112,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   
   const navigationItems = getNavigationItems(userRole);
-  const footerNavigationItems = getFooterNavigationItems(userRole);
+  const footerNavigationItems = getFooterNavigationItems();
 
   const footerSlogan = "Votre santé, comprise.";
   const footerRights = `© ${new Date().getFullYear()} MediMind IA. Tous droits réservés. Confidentialité des données assurée.`;
@@ -148,7 +148,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   if (!userRole) {
-    return <RoleSelector onRoleSelect={setUserRole} />;
+    return <RoleSelector />;
   }
 
   return (

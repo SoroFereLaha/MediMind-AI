@@ -2,13 +2,8 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  // Dans Next.js 15+, nous devons attendre params avant de l'utiliser
-  const paramsData = await params;
-  const id = paramsData.id;
+export async function GET(request: Request, { params }: any) {
+  const id = params.id;
   
   try {
     const db = await getDb();

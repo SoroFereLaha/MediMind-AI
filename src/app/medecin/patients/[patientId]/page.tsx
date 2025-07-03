@@ -115,7 +115,28 @@ export default function FichePatientDetailPage() {
           }
 
           const output: SearchApiResponse = await response.json();
-          setRecommendedDocs(output.results);
+
+          // Récupérer les notes pour filtrer les documents déjà dislikés (note ≤2)
+          const doctorId = 'doc-001'; // TODO: récupérer l'ID médecin réel
+          let disliked: Record<number, number> = {};
+          try {
+            const ratingsRes = await fetch(`/api/ratings?doctorId=${doctorId}`);
+            if (ratingsRes.ok) {
+              const data = await ratingsRes.json();
+              data.ratings?.forEach((r: { document_id: number; rating: number }) => {
+                disliked[r.document_id] = r.rating;
+              });
+            }
+          } catch (e) {
+            console.warn('Impossible de lire les notes, le filtrage sera ignoré');
+          }
+
+          const filtered = output.results.filter((d) => {
+            const r = disliked[d.document_id];
+            return r === undefined || r > 2; // garder si pas noté ou note >2
+          });
+
+          setRecommendedDocs(filtered);
 
         } catch (e) {
           setDocsError(e instanceof Error ? e.message : "Erreur lors de la récupération des documents pertinents.");

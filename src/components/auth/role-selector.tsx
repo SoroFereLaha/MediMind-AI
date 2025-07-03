@@ -17,7 +17,7 @@ export function RoleSelector() {
       // Persist role in cookie for 1 day
       document.cookie = `role=${role}; path=/; max-age=${60 * 60 * 24}`;
       // Navigate to the correct dashboard
-      router.replace(role === 'medecin' ? '/medecin' : '/patient');
+      router.replace(role === 'medecin' ? '/medecin' : '/');
     }
   };
 

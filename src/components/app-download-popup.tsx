@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import Image from 'next/image';
+import { useAppContext } from '@/contexts/app-context';
 
 
 interface AppDownloadPopupProps {
@@ -24,6 +25,7 @@ const carouselImages = [
 
 export function AppDownloadPopup({ triggerHoverCount = 5, scrollDelayMs = 10000, autoHideMs }: AppDownloadPopupProps) {
   const [open, setOpen] = useState(false);
+  const [hasShown, setHasShown] = useState(false);
   const hoverCounter = useRef(0);
   const [current, setCurrent] = useState(0);
   const [currentText, setCurrentText] = useState(0);
@@ -53,39 +55,40 @@ export function AppDownloadPopup({ triggerHoverCount = 5, scrollDelayMs = 10000,
     }
   }, [open]);
 
-  // --- Trigger by scroll + delay
-  useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
-    const handleScroll = () => {
-      if (open) return;
-      if (window.scrollY > 200) {
-        if (!timer) {
-          timer = setTimeout(() => setOpen(true), scrollDelayMs);
-        }
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (timer) clearTimeout(timer);
-    };
-  }, [open, scrollDelayMs]);
+  // scroll trigger disabled
+  useEffect(() => {}, []);
 
-  // --- Trigger by hovers on any <button>
+
+
+
+  // dblclick trigger
   useEffect(() => {
-    if (open) return;
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.tagName.toLowerCase() === 'button') {
-        hoverCounter.current += 1;
-        if (hoverCounter.current >= triggerHoverCount) {
-          setOpen(true);
-        }
+    const handleDblClick = () => setOpen(true);
+    document.addEventListener('dblclick', handleDblClick);
+    return () => document.removeEventListener('dblclick', handleDblClick);
+  }, []);
+
+  // open when role changes
+  const { userRole } = useAppContext();
+  const prevRole = useRef(userRole);
+  useEffect(() => {
+    if (prevRole.current !== userRole) {
+      prevRole.current = userRole;
+      if (userRole) {
+        setOpen(true);
       }
-    };
-    document.addEventListener('mouseover', handleMouseOver);
-    return () => document.removeEventListener('mouseover', handleMouseOver);
-  }, [open, triggerHoverCount]);
+    }
+  }, [userRole]);
+
+  // marque comme déjà affiché (logic removed)
+  useEffect(() => {
+    if (open && !hasShown) {
+      setHasShown(true);
+      try {
+        localStorage.setItem('mm-popup-shown', 'true');
+      } catch {}
+    }
+  }, []);
 
   // auto hide
   useEffect(() => {

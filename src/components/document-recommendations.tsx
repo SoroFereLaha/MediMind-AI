@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface DocumentRecommendationsProps {
-  doctorId: string;
+  doctorId?: string;
   recommendations: {
     method: string;
     query: string;
@@ -55,6 +55,7 @@ export function DocumentRecommendations({ doctorId, recommendations, loading, er
   const [reason, setReason] = useState('');
 
   const saveRating = async (id: number, rating: number, reasonText: string = '') => {
+    if (!doctorId) return; // Pas de médecin, pas d'enregistrement
     updateLocal(id, rating);
     try {
       await fetch('/api/ratings', {

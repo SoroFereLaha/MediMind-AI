@@ -1,7 +1,5 @@
 'use client';
 
-'use client';
-
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -28,6 +26,8 @@ const registerSchema = z.object({
   path: ['confirmPassword'],
 });
 
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
 export default function RegisterPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +37,7 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       role: 'patient',
